@@ -1,0 +1,6 @@
+<div *ngIf="datastream">
+  {{datastream.name}} - {{datastream.description}}
+  <span *ngIf="observation">
+    {{observation.result}} {{datastream.unitOfMeasurement.symbol}} at {{observation.phenomenonTime}}
+  </span>
+</div>

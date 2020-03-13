@@ -1,0 +1,13 @@
+{
+    "env": {
+        "name": "DEV"
+    },
+    "sta": {
+        "http": "http://localhost:8081/sta/",
+        "mqtt": {
+            "hostname": "localhost",
+            "port": 8883,
+            "path": "/mqtt"
+        }
+    }
+}
