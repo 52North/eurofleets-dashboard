@@ -1,3 +1,19 @@
-<div *ngFor="let ds of datastreams">
-    <app-display-live-value [datastreamId]="ds['@iot.id']"></app-display-live-value>
+<!-- <div *ngFor="let ds of datastreams" class="datastream">
+  <app-display-live-value [datastreamId]="ds['@iot.id']"></app-display-live-value>
+</div> -->
+
+<div class="datastream">
+  <app-display-live-value [datastreamId]="'ES_GDC_latitude'"></app-display-live-value>
+</div>
+<div class="datastream">
+  <app-display-live-value [datastreamId]="'ES_GDC_longitude'"></app-display-live-value>
+</div>
+<div class="datastream">
+  <app-display-live-value [datastreamId]="'ES_GDC_course_over_ground'"></app-display-live-value>
+</div>
+<div class="datastream">
+  <app-display-live-value [datastreamId]="'ES_GDC_heading'"></app-display-live-value>
+</div>
+<div class="datastream">
+  <app-display-live-value [datastreamId]="'ES_GDC_speed_over_ground'"></app-display-live-value>
 </div>

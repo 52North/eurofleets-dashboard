@@ -1,6 +1,11 @@
-<div *ngIf="datastream">
-  {{datastream.name}} - {{datastream.description}}
-  <span *ngIf="observation">
-    {{observation.result}} {{datastream.unitOfMeasurement.symbol}} at {{observation.phenomenonTime}}
-  </span>
-</div>
+<mat-card *ngIf="datastream">
+  <mat-card-title>
+    {{datastream.name}}
+  </mat-card-title>
+  <mat-card-content>
+    <div>{{datastream.description}}</div>
+    <div *ngIf="observation">
+      {{observation.result}} {{datastream.unitOfMeasurement.symbol}} at {{observation.phenomenonTime | date: 'd.MM.y h:mm:ss'}}
+    </div>
+  </mat-card-content>
+</mat-card>
