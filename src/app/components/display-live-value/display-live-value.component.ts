@@ -2,8 +2,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Datastream, Observation, StaReadInterfaceService } from '@helgoland/core';
 import { Subscription } from 'rxjs';
 
-import { AppConfig } from '../config/app.config';
-import { StaMqttInterfaceService } from '../services/sta-mqtt-interface/sta-mqtt-interface.service';
+import { AppConfig } from '../../config/app.config';
+import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
 
 @Component({
   selector: 'app-display-live-value',

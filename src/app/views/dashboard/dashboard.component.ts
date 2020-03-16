@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Datastream, StaReadInterfaceService } from '@helgoland/core';
 
-import { AppConfig } from './../config/app.config';
+import { AppConfig } from '../../config/app.config';
 
 @Component({
   selector: 'app-dashboard',
