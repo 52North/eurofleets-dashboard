@@ -5,7 +5,13 @@
   <mat-card-content>
     <div>{{datastream.description}}</div>
     <div *ngIf="observation">
-      {{observation.result}} {{datastream.unitOfMeasurement.symbol}} at {{observation.phenomenonTime | date: 'd.MM.y h:mm:ss'}}
+      {{observation.result}} {{datastream.unitOfMeasurement.symbol}} at
+      {{observation.phenomenonTime | date: 'd.MM.y H:mm:ss'}}
+    </div>
+    <div style="height: 300px;">
+      <n52-extended-data-d3-timeseries-graph [additionalData]="additionalData" [timeInterval]="timespan"
+        [presenterOptions]="graphOptions" (onTimespanChanged)="timespanChanged($event)">
+      </n52-extended-data-d3-timeseries-graph>
     </div>
   </mat-card-content>
 </mat-card>

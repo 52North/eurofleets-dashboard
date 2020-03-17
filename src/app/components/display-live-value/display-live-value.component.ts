@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Datastream, Observation, StaReadInterfaceService } from '@helgoland/core';
+import { DatasetOptions, Datastream, Observation, StaReadInterfaceService, Timespan } from '@helgoland/core';
+import { AdditionalData, D3PlotOptions } from '@helgoland/d3';
 import { Subscription } from 'rxjs';
 
 import { AppConfig } from '../../config/app.config';
@@ -19,6 +20,21 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
 
   public subscriptions: Subscription[] = [];
 
+  public additionalData: AdditionalData[] = [];
+  public timespan: Timespan;
+
+  public graphOptions: D3PlotOptions = {
+    yaxis: true
+  };
+
+  public datasetOptions: Map<string, DatasetOptions> = new Map();
+
+  public selectedIds: string[] = [];
+
+  public graphLoading: boolean;
+
+  public interval: NodeJS.Timer;
+
   constructor(
     private staMqtt: StaMqttInterfaceService,
     private sta: StaReadInterfaceService,
@@ -26,18 +42,73 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscriptions.push(this.sta.getDatastream(AppConfig.settings.sta.http, this.datastreamId).subscribe(
-      ds => this.datastream = ds,
+      ds => this.setDatastream(ds),
       error => console.error(error)
     ));
+
+    // this.subscriptions.push(this.sta.getDatastreamObservationsRelation(AppConfig.settings.sta.http, this.datastreamId, {
+    //   $top: 1,
+    //   $orderby: 'phenomenonTime'
+    // }).subscribe(
+    //   obs => {
+    //     if (obs['@iot.count'] > 0) {
+    //       debugger;
+    //     }
+    //   },
+    //   error => console.error(error)
+    // ));
 
     this.subscriptions.push(this.staMqtt.subscribeDatastreamObservations(this.datastreamId).subscribe(observation => {
       console.log(`'${this.datastreamId}' with ${observation.result} at ${observation.phenomenonTime}`);
       this.observation = observation;
+      const timestamp = new Date(observation.phenomenonTime).getTime();
+      const value = Number.parseFloat(observation.result);
+      this.additionalData[0].data.push({ timestamp, value });
+      this.setNewTimespan(timestamp);
     }));
+  }
+
+  private setDatastream(ds: Datastream): void {
+    this.datastream = ds;
+
+    const options = new DatasetOptions('addData', 'red');
+    options.pointRadius = 2;
+    options.lineWidth = 2;
+    this.additionalData = [{
+      internalId: '',
+      yaxisLabel: ds.unitOfMeasurement.symbol,
+      datasetOptions: options,
+      data: []
+    }];
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
+  private setNewTimespan(end: number) {
+    let diff = 600000;
+    if (this.additionalData[0].data[0].timestamp) {
+      diff = end - this.additionalData[0].data[0].timestamp;
+    }
+    diff = diff > 600000 ? 600000 : diff;
+    this.timespan = new Timespan(end - diff, end);
+  }
+
+  public timespanChanged(timespan: Timespan) {
+    this.timespan = timespan;
+  }
+
+  public selectTimeseries(selected: boolean, id: string) {
+    if (selected) {
+      if (this.selectedIds.indexOf(id) < 0) {
+        this.selectedIds.push(id);
+      }
+    } else {
+      if (this.selectedIds.indexOf(id) >= 0) {
+        this.selectedIds.splice(this.selectedIds.findIndex((entry) => entry === id), 1);
+      }
+    }
   }
 
 }
