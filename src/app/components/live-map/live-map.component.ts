@@ -1,6 +1,7 @@
 import 'leaflet-rotatedmarker';
 
 import { AfterViewInit, Component } from '@angular/core';
+import { Observation } from '@helgoland/core';
 import { LayerMap, MapCache } from '@helgoland/map';
 import * as L from 'leaflet';
 
@@ -19,9 +20,6 @@ export class LiveMapComponent implements AfterViewInit {
   public overlayMaps: LayerMap = new Map();
   public baseMaps: LayerMap = new Map();
 
-  private lastLong: number;
-  private lastLat: number;
-  private lastCoG: number;
   private polyLine: L.Polyline;
   private map: L.Map;
   private ship: L.Marker;
@@ -41,50 +39,28 @@ export class LiveMapComponent implements AfterViewInit {
     this.map = this.mapCache.getMap('map-view');
     this.map.setZoom(16);
 
-    this.polyLine = L.polyline([]).addTo(this.map);
-
-    this.staMqtt.subscribeDatastreamObservations('ES_GDC_longitude').subscribe(
-      observation => this.setLongitude(Number.parseFloat(observation.result))
-    );
-
-    this.staMqtt.subscribeDatastreamObservations('ES_GDC_latitude').subscribe(
-      observation => this.setLatitude(Number.parseFloat(observation.result))
-    );
-
     this.staMqtt.subscribeDatastreamObservations('ES_GDC_course_over_ground').subscribe(
-      observation => this.setCoG(Number.parseFloat(observation.result))
+      observation => this.setValues(observation)
     );
   }
 
-  setLatitude(lat: number): void {
-    this.lastLat = lat;
-    this.setCoords();
-  }
-
-  setLongitude(lon: number): void {
-    this.lastLong = lon;
-    this.setCoords();
-  }
-
-  setCoG(course: number) {
-    this.lastCoG = course;
-    this.setCoords();
-  }
-
-  setCoords() {
-    if (this.lastLat && this.lastLong) {
-      const coords: L.LatLngTuple = [this.lastLat, this.lastLong];
-      this.polyLine.addLatLng(coords);
-      this.map.setView(coords, this.map.getZoom());
-      this.drawMarker(coords);
-      this.lastLat = null;
-      this.lastLong = null;
-      this.lastCoG = null;
+  setValues(observation: Observation) {
+    if (!this.polyLine) {
+      this.polyLine = L.polyline([]).addTo(this.map);
     }
+    const course = Number.parseFloat(observation.result);
+    const nameValPair = observation.parameters.find(e => e.name === 'http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry');
+    const geom = JSON.parse(nameValPair.value) as GeoJSON.Point;
+    const lat = geom.coordinates[1];
+    const lon = geom.coordinates[0];
+    const coords: L.LatLngTuple = [lat, lon];
+    this.polyLine.addLatLng(coords);
+    this.map.setView(coords, this.map.getZoom());
+    this.drawMarker(coords, course);
   }
 
-  drawMarker(coords: L.LatLngTuple) {
-    const angle = this.lastCoG - 90;
+  drawMarker(coords: L.LatLngTuple, course: number) {
+    const angle = course - 90;
     if (!this.ship) {
       this.ship = L.marker(coords, { icon: this.shipIcon, rotationAngle: angle }).addTo(this.map);
     } else {
