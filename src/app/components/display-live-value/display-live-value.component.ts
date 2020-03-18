@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { AppConfig } from '../../config/app.config';
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
 
+const MAX_TIMESPAN_CHART = 60000;
+
 @Component({
   selector: 'app-display-live-value',
   templateUrl: './display-live-value.component.html',
@@ -87,11 +89,11 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
   }
 
   private setNewTimespan(end: number) {
-    let diff = 600000;
+    let diff = MAX_TIMESPAN_CHART;
     if (this.additionalData[0].data[0].timestamp) {
       diff = end - this.additionalData[0].data[0].timestamp;
     }
-    diff = diff > 600000 ? 600000 : diff;
+    diff = diff > MAX_TIMESPAN_CHART ? MAX_TIMESPAN_CHART : diff;
     this.timespan = new Timespan(end - diff, end);
   }
 

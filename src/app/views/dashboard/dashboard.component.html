@@ -1,6 +1,10 @@
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5">
 
-  <div *ngFor="let ds of datastreams" class="datastream" fxFlex.gt-md="32.5" fxFlex.md="49" fxFlex.sm="100">
+  <div class="element" fxFlex.gt-md="33.3" fxFlex.md="50" fxFlex.sm="100">
+    <app-live-map></app-live-map>
+  </div>
+
+  <div *ngFor="let ds of datastreams" class="element" fxFlex.gt-md="33.3" fxFlex.md="50" fxFlex.sm="100">
     <app-display-live-value [datastreamId]="ds"></app-display-live-value>
   </div>
 

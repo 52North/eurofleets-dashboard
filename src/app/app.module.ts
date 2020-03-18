@@ -5,12 +5,14 @@ import { MatCardModule } from '@angular/material/card';
 import { BrowserModule } from '@angular/platform-browser';
 import { HelgolandCoreModule } from '@helgoland/core';
 import { HelgolandD3Module } from '@helgoland/d3';
+import { HelgolandMapViewModule } from '@helgoland/map';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DisplayLiveValueComponent } from './components/display-live-value/display-live-value.component';
+import { LiveMapComponent } from './components/live-map/live-map.component';
 import { AppConfig } from './config/app.config';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 
@@ -27,6 +29,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     DashboardComponent,
     DisplayLiveValueComponent,
+    LiveMapComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -41,6 +44,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     HelgolandCoreModule,
     HelgolandD3Module,
+    HelgolandMapViewModule,
     MatCardModule,
   ],
   providers: [

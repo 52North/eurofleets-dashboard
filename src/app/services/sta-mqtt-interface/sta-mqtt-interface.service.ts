@@ -22,8 +22,8 @@ export class StaMqttInterfaceService {
   }
 
   public subscribeDatastreamObservations(datasetId: string): Observable<Observation> {
-    // TODO: add filterung
-    return this.mqttService.observe(`Datastreams(${datasetId})/Observations?$select=result,phenomenonTime`).pipe(
+    // TODO: add filterung: $select=result,phenomenonTime
+    return this.mqttService.observe(`Datastreams(${datasetId})/Observations`).pipe(
       map(message => JSON.parse(message.payload.toString()) as Observation)
     );
   }
