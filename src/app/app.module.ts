@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserModule } from '@angular/platform-browser';
 import { HelgolandCoreModule } from '@helgoland/core';
@@ -30,6 +31,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     AppRoutingModule,
     BrowserModule,
+    FlexLayoutModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

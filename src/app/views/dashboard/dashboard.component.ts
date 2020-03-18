@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Datastream, StaReadInterfaceService } from '@helgoland/core';
+import { StaReadInterfaceService } from '@helgoland/core';
 
 import { AppConfig } from '../../config/app.config';
 
@@ -10,17 +10,24 @@ import { AppConfig } from '../../config/app.config';
 })
 export class DashboardComponent implements OnInit {
 
-  public datastreams: Datastream[];
+  public datastreams: string[];
 
   constructor(
     private sta: StaReadInterfaceService
   ) { }
 
   ngOnInit() {
-    this.sta.getDatastreams(AppConfig.settings.sta.http).subscribe(
-      datastreams => this.datastreams = datastreams.value,
-      error => console.error(error)
-    );
+    // this.sta.getDatastreams(AppConfig.settings.sta.http).subscribe(
+    //   datastreams => this.datastreams = datastreams.value.map(e => e['@iot.id']),
+    //   error => console.error(error)
+    // );
+    this.datastreams = [
+      'ES_GDC_latitude',
+      'ES_GDC_longitude',
+      'ES_GDC_course_over_ground',
+      'ES_GDC_heading',
+      'ES_GDC_speed_over_ground'
+    ];
   }
 
 }
