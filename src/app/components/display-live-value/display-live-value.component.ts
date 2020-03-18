@@ -61,7 +61,6 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     // ));
 
     this.subscriptions.push(this.staMqtt.subscribeDatastreamObservations(this.datastreamId).subscribe(observation => {
-      console.log(`'${this.datastreamId}' with ${observation.result} at ${observation.phenomenonTime}`);
       this.observation = observation;
       const timestamp = new Date(observation.phenomenonTime).getTime();
       const value = Number.parseFloat(observation.result);

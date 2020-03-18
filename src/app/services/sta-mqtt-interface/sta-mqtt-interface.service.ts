@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observation } from '@helgoland/core';
 import { MqttService } from 'ngx-mqtt';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { AppConfig } from '../../config/app.config';
 
@@ -24,7 +24,8 @@ export class StaMqttInterfaceService {
   public subscribeDatastreamObservations(datasetId: string): Observable<Observation> {
     // TODO: add filterung: $select=result,phenomenonTime
     return this.mqttService.observe(`Datastreams(${datasetId})/Observations`).pipe(
-      map(message => JSON.parse(message.payload.toString()) as Observation)
+      map(message => JSON.parse(message.payload.toString()) as Observation),
+      tap(observation => console.log(`Observation for ${datasetId} with result: ${observation.result}`))
     );
   }
 

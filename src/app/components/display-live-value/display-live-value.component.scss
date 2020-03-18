@@ -1,0 +1,23 @@
+:host {
+    mat-card {
+        padding: 0px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        mat-card-title {
+            padding: 16px;
+        }
+
+        mat-card-content {
+            padding: 0 16px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            .chart {
+                flex: 1;
+            }
+        }
+    }
+}
