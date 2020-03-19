@@ -1,0 +1,14 @@
+:host {
+    .entry {
+        display: flex;
+        align-items: center;
+
+        .label {
+            padding-left: 10px;
+        }
+
+        .edit {
+            padding-left: 10px;
+        }
+    }
+}

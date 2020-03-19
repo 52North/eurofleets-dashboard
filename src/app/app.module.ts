@@ -1,11 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
-import { HelgolandCoreModule } from '@helgoland/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DatasetApiV3ConnectorProvider, HelgolandCoreModule } from '@helgoland/core';
 import { HelgolandD3Module } from '@helgoland/d3';
 import { HelgolandMapViewModule } from '@helgoland/map';
+import { HelgolandModificationModule } from '@helgoland/modification';
+import { HelgolandSelectorModule } from '@helgoland/selector';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -15,6 +22,10 @@ import { DisplayLiveValueComponent } from './components/display-live-value/displ
 import { LiveMapComponent } from './components/live-map/live-map.component';
 import { AppConfig } from './config/app.config';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
+import {
+  CustomTrajectoryEntryComponent,
+} from './views/trajectories/custom-trajectory-entry/custom-trajectory-entry.component';
+import { TrajectoriesViewComponent } from './views/trajectories/view.component';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -27,27 +38,31 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    CustomTrajectoryEntryComponent,
     DashboardComponent,
     DisplayLiveValueComponent,
     LiveMapComponent,
+    TrajectoriesViewComponent,
   ],
   imports: [
     AppRoutingModule,
+    BrowserAnimationsModule,
     BrowserModule,
     FlexLayoutModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
     HelgolandCoreModule,
     HelgolandD3Module,
     HelgolandMapViewModule,
+    HelgolandModificationModule,
+    HelgolandSelectorModule,
+    MatButtonModule,
     MatCardModule,
+    MatIconModule,
+    MatRadioModule,
+    MatToolbarModule,
+    TranslateModule.forRoot({ loader: { provide: TranslateLoader, useFactory: HttpLoaderFactory, deps: [HttpClient] } }),
   ],
   providers: [
+    DatasetApiV3ConnectorProvider,
     AppConfig,
     {
       provide: APP_INITIALIZER,

@@ -1,10 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
-@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
-
 @import '~@angular/material/theming';
+@import '~leaflet/dist/leaflet.css';
+
+html {
+    height: 100%;
+}
 
 body {
     background-color: #f9f9f9;
+    margin: 0px;
+    height: 100%;
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-
-@import '~leaflet/dist/leaflet.css';

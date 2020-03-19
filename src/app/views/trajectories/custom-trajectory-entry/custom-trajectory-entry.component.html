@@ -1,0 +1,9 @@
+<div class="entry" style="white-space: nowrap;" (click)="toggleVisibility()">
+  <mat-icon *ngIf="datasetOptions?.visible">visibility</mat-icon>
+  <mat-icon *ngIf="!datasetOptions?.visible">visibility_off
+  </mat-icon>
+  <span class="label" [ngStyle]="{'color': datasetOptions?.color}">{{dataset?.parameters.phenomenon.label}}
+  </span>
+  <!-- <mat-icon class="edit" (click)="editDatasetOptions(datasetOptions); $event.stopPropagation();"
+    [ngStyle]="{color: datasetOptions?.color}">edit</mat-icon> -->
+</div>

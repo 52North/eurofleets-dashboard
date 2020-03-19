@@ -1,0 +1,53 @@
+<div class="wrapper">
+  <div class="header-wrapper" *ngIf="trajectory">
+    <span *ngIf="trajectory.parameters.feature.label"> {{trajectory.parameters.feature.label}} </span>
+  </div>
+
+  <div class="flex-wrapper">
+    <n52-geometry-map-viewer class="map" mapId="trajectory" [geometry]="geometry" [highlight]="highlightGeometry"
+      [zoomTo]="zoomToGeometry"></n52-geometry-map-viewer>
+  </div>
+
+  <div class="flex-wrapper">
+    <div class="diagram-wrapper">
+      <div class="diagram">
+        <div *ngIf="hasVisibleDatasets();else emptyChart" style="height: 100%;">
+          <n52-d3-trajectory-graph [datasetIds]="datasetIds" [timeInterval]="timespan" [datasetOptions]="options"
+            [presenterOptions]="graphOptions" [selection]="selection"
+            (onSelectionChanged)="onChartSelectionChanged($event)"
+            (onSelectionChangedFinished)="onChartSelectionChangedFinished($event)"
+            (onHoverHighlight)="onChartHighlightChanged($event)"></n52-d3-trajectory-graph>
+          <div class="chart-information">
+            <span class="fa fa-info-circle"
+              title="{{'trajectories.view.graph-information-tooltip' | translate}}"></span>
+          </div>
+        </div>
+        <ng-template #emptyChart>
+          <div class="container n52-alert">
+            <div class="alert alert-primary" role="alert">
+              <a class="alert-link">{{'trajectories.diagram.hint' | translate}}</a>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="legend">
+        <div *ngFor="let id of datasetIds" class="legend-entry">
+          <app-custom-trajectory-entry [datasetId]="id" [datasetOptions]="options.get(id)"
+            (onEditOptions)="editOptions($event)"></app-custom-trajectory-entry>
+        </div>
+      </div>
+      <div class="chart-buttons">
+        <mat-radio-group [value]="graphOptions.axisType" (change)="toggleAxisType($event)">
+          <mat-radio-button [value]="0">Distance
+          </mat-radio-button>
+          <mat-radio-button [value]="1">Time
+          </mat-radio-button>
+          <mat-radio-button [value]="2">Ticks
+          </mat-radio-button>
+        </mat-radio-group>
+        <hr>
+        
+      </div>
+    </div>
+  </div>
+</div>
