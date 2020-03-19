@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {
     DatasetOptions,
     DatasetType,
@@ -9,15 +9,23 @@ import {
     Timespan,
 } from '@helgoland/core';
 import { D3AxisType, D3GraphOptions, D3SelectionRange } from '@helgoland/d3';
+import { MapCache } from '@helgoland/map';
+import L from 'leaflet';
+import { interval, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { isUndefined } from 'util';
 
+import { SHIP_ICON } from '../../components/live-map/live-map.component';
 import { TrajectoriesService } from './trajectories.service';
+
+const DEFAULT_START_TIME_INTERVAL = 500;
 
 @Component({
     selector: 'app-trajectories-view',
     templateUrl: './view.component.html',
     styleUrls: ['./view.component.scss'],
 })
-export class TrajectoriesViewComponent implements OnInit {
+export class TrajectoriesViewComponent implements OnInit, OnDestroy {
 
     public selection: D3SelectionRange;
 
@@ -45,6 +53,8 @@ export class TrajectoriesViewComponent implements OnInit {
 
     public selectedTimespan: Timespan;
 
+    private ship: L.Marker;
+
     @ViewChild('modalTrajectoryOptionsEditor', { static: true })
     public modalTrajectoryOptionsEditor: TemplateRef<any>;
 
@@ -57,10 +67,16 @@ export class TrajectoriesViewComponent implements OnInit {
     public axisTypeTime = D3AxisType.Time;
     public axisTypeTicks = D3AxisType.Ticks;
 
+    private replaySubscription: Subscription;
+    private lastReplayStep: number;
+    private lastInterval: number;
+    public highlightIndex: number;
+
     constructor(
         private trajectorySrvc: TrajectoriesService,
         private servicesConnector: HelgolandServicesConnector,
         private internalIdHandler: InternalIdHandler,
+        private mapCache: MapCache
     ) { }
 
     public ngOnInit() {
@@ -81,7 +97,7 @@ export class TrajectoriesViewComponent implements OnInit {
                         data => {
                             this.geometry = {
                                 type: 'LineString',
-                                coordinates: []
+                                coordinates: [],
                             };
                             this.graphData = data.values;
                             data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
@@ -91,6 +107,10 @@ export class TrajectoriesViewComponent implements OnInit {
                 }
             );
         }
+    }
+
+    public ngOnDestroy(): void {
+        this.replaySubscription.unsubscribe();
     }
 
     public onChartSelectionChanged(range: D3SelectionRange) {
@@ -115,10 +135,22 @@ export class TrajectoriesViewComponent implements OnInit {
     }
 
     public onChartHighlightChanged(idx: number) {
-        this.highlightGeometry = {
-            type: 'Point',
-            coordinates: this.geometry.coordinates[idx]
-        } as GeoJSON.GeoJsonObject;
+        if (this.geometry.coordinates.length < idx) {
+            this.ship.remove();
+            this.ship = null;
+        } else {
+            const lat = this.geometry.coordinates[idx][1];
+            const lon = this.geometry.coordinates[idx][0];
+            const coords: L.LatLngTuple = [lat, lon];
+            const angle = this.graphData[idx].value - 90;
+            const lmap = this.mapCache.getMap('trajectory');
+            if (!this.ship) {
+                this.ship = L.marker(coords, { icon: SHIP_ICON, rotationAngle: angle }).addTo(lmap);
+            } else {
+                this.ship.setLatLng(coords);
+                this.ship.setRotationAngle(angle);
+            }
+        }
     }
 
     public onDottedChanged(dotted: boolean) {
@@ -149,6 +181,47 @@ export class TrajectoriesViewComponent implements OnInit {
 
     public toggleAxisType(bla: any) {
         this.graphOptions.axisType = bla.value;
+    }
+
+    public startReplay() {
+        if (isUndefined(this.lastReplayStep)) {
+            this.lastReplayStep = 0;
+        }
+        this.runReplay(DEFAULT_START_TIME_INTERVAL, this.lastReplayStep);
+    }
+
+    private runReplay(intervalTimer: number, startWith: number) {
+        this.lastInterval = intervalTimer;
+        this.replaySubscription = interval(intervalTimer).pipe(map(i => i + startWith))
+            .subscribe(idx => this.setHighlightIndex(idx));
+    }
+
+    private setHighlightIndex(idx: number) {
+        this.lastReplayStep = idx;
+        console.log(`Replay step ${idx}`);
+        this.onChartHighlightChanged(idx);
+        this.highlightIndex = idx;
+    }
+
+    public pauseReplay() {
+        this.replaySubscription.unsubscribe();
+        this.lastReplayStep += 1;
+    }
+
+    public resetReplay() {
+        if (!this.replaySubscription.closed) {
+            this.replaySubscription.unsubscribe();
+            this.runReplay(DEFAULT_START_TIME_INTERVAL, 0);
+        } else {
+            this.setHighlightIndex(0);
+        }
+    }
+
+    public accelerateReplay() {
+        this.replaySubscription.unsubscribe();
+        this.lastInterval = this.lastInterval / 2;
+        console.log(`Run faster with ${this.lastInterval}`);
+        this.runReplay(this.lastInterval, this.lastReplayStep);
     }
 
 }

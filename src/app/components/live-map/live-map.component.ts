@@ -7,6 +7,12 @@ import * as L from 'leaflet';
 
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
 
+export const SHIP_ICON = L.icon({
+  iconUrl: 'assets/boot.png',
+  iconSize: [75, 39], // size of the icon
+  iconAnchor: [37, 20], // point of the icon which will correspond to marker's location
+});
+
 @Component({
   selector: 'app-live-map',
   templateUrl: './live-map.component.html',
@@ -23,12 +29,6 @@ export class LiveMapComponent implements AfterViewInit {
   private polyLine: L.Polyline;
   private map: L.Map;
   private ship: L.Marker;
-
-  private shipIcon = L.icon({
-    iconUrl: 'assets/boot.png',
-    iconSize: [75, 39], // size of the icon
-    iconAnchor: [37, 20], // point of the icon which will correspond to marker's location
-  });
 
   constructor(
     private mapCache: MapCache,
@@ -62,7 +62,7 @@ export class LiveMapComponent implements AfterViewInit {
   drawMarker(coords: L.LatLngTuple, course: number) {
     const angle = course - 90;
     if (!this.ship) {
-      this.ship = L.marker(coords, { icon: this.shipIcon, rotationAngle: angle }).addTo(this.map);
+      this.ship = L.marker(coords, { icon: SHIP_ICON, rotationAngle: angle }).addTo(this.map);
     } else {
       this.ship.setLatLng(coords);
       this.ship.setRotationAngle(angle);

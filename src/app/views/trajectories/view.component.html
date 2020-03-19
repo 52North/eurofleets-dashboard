@@ -12,11 +12,11 @@
     <div class="diagram-wrapper">
       <div class="diagram">
         <div *ngIf="hasVisibleDatasets();else emptyChart" style="height: 100%;">
-          <n52-d3-trajectory-graph [datasetIds]="datasetIds" [timeInterval]="timespan" [datasetOptions]="options"
-            [presenterOptions]="graphOptions" [selection]="selection"
+          <app-custom-d3-trajectory-graph [datasetIds]="datasetIds" [timeInterval]="timespan" [datasetOptions]="options"
+            [presenterOptions]="graphOptions" [selection]="selection" [highlightIndex]="highlightIndex"
             (onSelectionChanged)="onChartSelectionChanged($event)"
             (onSelectionChangedFinished)="onChartSelectionChangedFinished($event)"
-            (onHoverHighlight)="onChartHighlightChanged($event)"></n52-d3-trajectory-graph>
+            (onHoverHighlight)="onChartHighlightChanged($event)"></app-custom-d3-trajectory-graph>
           <div class="chart-information">
             <span class="fa fa-info-circle"
               title="{{'trajectories.view.graph-information-tooltip' | translate}}"></span>
@@ -46,7 +46,22 @@
           </mat-radio-button>
         </mat-radio-group>
         <hr>
-        
+        <button mat-button (click)="startReplay()">
+          <mat-icon>play_arrow</mat-icon>
+          <span>Play</span>
+        </button>
+        <button mat-button (click)="pauseReplay()">
+          <mat-icon>pause</mat-icon>
+          <span>Pause</span>
+        </button>
+        <button mat-button (click)="resetReplay()">
+          <mat-icon>skip_previous</mat-icon>
+          <span>Reset</span>
+        </button>
+        <button mat-button (click)="accelerateReplay()">
+          <mat-icon>fast_forward</mat-icon>
+          <span>Faster</span>
+        </button>
       </div>
     </div>
   </div>

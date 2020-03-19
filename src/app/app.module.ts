@@ -18,6 +18,9 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import {
+  CustomD3TrajectoryGraphComponent,
+} from './components/custom-d3-trajectory-graph/custom-d3-trajectory-graph.component';
 import { DisplayLiveValueComponent } from './components/display-live-value/display-live-value.component';
 import { LiveMapComponent } from './components/live-map/live-map.component';
 import { AppConfig } from './config/app.config';
@@ -38,6 +41,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    CustomD3TrajectoryGraphComponent,
     CustomTrajectoryEntryComponent,
     DashboardComponent,
     DisplayLiveValueComponent,
