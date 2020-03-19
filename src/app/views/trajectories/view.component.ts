@@ -121,7 +121,6 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     public onChartSelectionChangedFinished(range: D3SelectionRange) {
-        console.log('Range finished: ' + range.from + ' ' + range.to);
         this.selection = range;
         this.zoomToGeometry = {
             type: 'LineString',
@@ -198,7 +197,6 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
 
     private setHighlightIndex(idx: number) {
         this.lastReplayStep = idx;
-        console.log(`Replay step ${idx}`);
         this.onChartHighlightChanged(idx);
         this.highlightIndex = idx;
     }
@@ -220,7 +218,6 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     public accelerateReplay() {
         this.replaySubscription.unsubscribe();
         this.lastInterval = this.lastInterval / 2;
-        console.log(`Run faster with ${this.lastInterval}`);
         this.runReplay(this.lastInterval, this.lastReplayStep);
     }
 

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { D3TrajectoryGraphComponent } from '@helgoland/d3';
-import { isDefined } from '@angular/compiler/src/util';
+import { isNullOrUndefined } from 'util';
 
 @Component({
   selector: 'app-custom-d3-trajectory-graph',
@@ -13,7 +13,7 @@ export class CustomD3TrajectoryGraphComponent extends D3TrajectoryGraphComponent
 
   public ngOnChanges(changes: SimpleChanges) {
     super.ngOnChanges(changes);
-    if (changes.highlightIndex &&  isDefined(this.highlightIndex)) {
+    if (changes.highlightIndex && !isNullOrUndefined(this.highlightIndex)) {
       this.showDiagramIndicator(this.highlightIndex);
     }
   }
