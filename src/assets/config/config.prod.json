@@ -1,7 +1,4 @@
 {
-    "env": {
-        "name": "DEV"
-    },
     "sta": {
         "http": "http://localhost:8081/sta/",
         "mqtt": {

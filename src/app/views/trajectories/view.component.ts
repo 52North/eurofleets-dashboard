@@ -110,7 +110,9 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.replaySubscription.unsubscribe();
+        if (this.replaySubscription) {
+            this.replaySubscription.unsubscribe();
+        }
     }
 
     public onChartSelectionChanged(range: D3SelectionRange) {

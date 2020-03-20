@@ -5,9 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "docker": "docker build -t eurofleets-dashboard . && docker run -p 80:80 --env-file=.env eurofleets-dashboard"
   },
   "private": true,
   "dependencies": {
@@ -22,8 +24,8 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
-    "@helgoland/core": "file:../helgoland-toolbox/helgoland-core-1.0.0-beta.15.tgz",
-    "@helgoland/d3": "file:../helgoland-toolbox/helgoland-d3-1.0.0-beta.15.tgz",
+    "@helgoland/core": "^1.0.0-beta.15",
+    "@helgoland/d3": "^1.0.0-beta.15",
     "@helgoland/depiction": "^1.0.0-beta.15",
     "@helgoland/map": "^1.0.0-beta.15",
     "@helgoland/modification": "^1.0.0-beta.15",

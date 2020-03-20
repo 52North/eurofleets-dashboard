@@ -1,0 +1,10 @@
+{
+    "sta": {
+        "http": "${STA_URL}",
+        "mqtt": {
+            "hostname": "${MQTT_HOSTNAME}",
+            "port": "${MQTT_PORT}",
+            "path": "${MQTT_PATH}"
+        }
+    }
+}

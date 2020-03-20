@@ -1,7 +1,4 @@
 export interface IAppConfig {
-    env: {
-        name: string;
-    };
     sta: {
         http: string;
         mqtt: {
