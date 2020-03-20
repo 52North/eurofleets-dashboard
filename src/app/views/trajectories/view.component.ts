@@ -59,7 +59,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     public modalTrajectoryOptionsEditor: TemplateRef<any>;
 
     public graphOptions: D3GraphOptions = {
-        axisType: D3AxisType.Distance,
+        axisType: D3AxisType.Time,
         dotted: false
     };
 
@@ -67,7 +67,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     public axisTypeTime = D3AxisType.Time;
     public axisTypeTicks = D3AxisType.Ticks;
 
-    private replaySubscription: Subscription;
+    public replaySubscription: Subscription;
     private lastReplayStep: number;
     private lastInterval: number;
     public highlightIndex: number;
@@ -134,9 +134,11 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     public onChartHighlightChanged(idx: number) {
-        if (this.geometry.coordinates.length < idx) {
-            this.ship.remove();
-            this.ship = null;
+        if (this.geometry.coordinates.length <= idx) {
+            if (this.ship) {
+                this.ship.remove();
+                this.ship = null;
+            }
         } else {
             const lat = this.geometry.coordinates[idx][1];
             const lon = this.geometry.coordinates[idx][0];
@@ -196,9 +198,13 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     private setHighlightIndex(idx: number) {
-        this.lastReplayStep = idx;
-        this.onChartHighlightChanged(idx);
-        this.highlightIndex = idx;
+        if (this.geometry.coordinates.length > idx) {
+            this.lastReplayStep = idx;
+            this.onChartHighlightChanged(idx);
+            this.highlightIndex = idx;
+        } else {
+            this.replaySubscription.unsubscribe();
+        }
     }
 
     public pauseReplay() {

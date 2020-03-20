@@ -46,14 +46,18 @@
           </mat-radio-button>
         </mat-radio-group>
         <hr>
-        <button mat-button (click)="startReplay()">
-          <mat-icon>play_arrow</mat-icon>
-          <span>Play</span>
-        </button>
-        <button mat-button (click)="pauseReplay()">
-          <mat-icon>pause</mat-icon>
-          <span>Pause</span>
-        </button>
+        <ng-container *ngIf="!replaySubscription || replaySubscription.closed; else elseTemplate">
+          <button mat-button (click)="startReplay()">
+            <mat-icon>play_arrow</mat-icon>
+            <span>Play</span>
+          </button>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <button mat-button (click)="pauseReplay()">
+            <mat-icon>pause</mat-icon>
+            <span>Pause</span>
+          </button>
+        </ng-template>
         <button mat-button (click)="resetReplay()">
           <mat-icon>skip_previous</mat-icon>
           <span>Reset</span>
