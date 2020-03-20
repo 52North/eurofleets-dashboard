@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StaReadInterfaceService } from '@helgoland/core';
 
-import { AppConfig } from '../../config/app.config';
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -22,8 +20,6 @@ export class DashboardComponent implements OnInit {
     //   error => console.error(error)
     // );
     this.datastreams = [
-      'ES_GDC_latitude',
-      'ES_GDC_longitude',
       'ES_GDC_course_over_ground',
       'ES_GDC_heading',
       'ES_GDC_speed_over_ground'
