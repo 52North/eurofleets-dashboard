@@ -47,26 +47,20 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
       ds => this.setDatastream(ds),
       error => console.error(error)
     ));
+  }
 
-    // this.subscriptions.push(this.sta.getDatastreamObservationsRelation(AppConfig.settings.sta.http, this.datastreamId, {
-    //   $top: 1,
-    //   $orderby: 'phenomenonTime'
-    // }).subscribe(
-    //   obs => {
-    //     if (obs['@iot.count'] > 0) {
-    //       debugger;
-    //     }
-    //   },
-    //   error => console.error(error)
-    // ));
-
+  private startListeningLiveData() {
     this.subscriptions.push(this.staMqtt.subscribeDatastreamObservations(this.datastreamId).subscribe(observation => {
-      this.observation = observation;
-      const timestamp = new Date(observation.phenomenonTime).getTime();
-      const value = Number.parseFloat(observation.result);
-      this.additionalData[0].data.push({ timestamp, value });
-      this.setNewTimespan(timestamp);
+      this.addObservationToDataArray(observation);
+      this.setNewTimespan();
     }));
+  }
+
+  private addObservationToDataArray(observation: Observation) {
+    this.observation = observation;
+    const timestamp = new Date(observation.phenomenonTime).getTime();
+    const value = Number.parseFloat(observation.result);
+    this.additionalData[0].data.push({ timestamp, value });
   }
 
   private setDatastream(ds: Datastream): void {
@@ -81,13 +75,29 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
       datasetOptions: options,
       data: []
     }];
+
+    this.subscriptions.push(this.sta.getDatastreamObservationsRelation(AppConfig.settings.sta.http, this.datastreamId, {
+      $top: 2,
+      $orderby: 'phenomenonTime desc',
+    }).subscribe(
+      obs => {
+        obs.value.reverse().forEach(e => this.addObservationToDataArray(e));
+        this.setNewTimespan();
+        this.startListeningLiveData();
+      },
+      error => {
+        console.error(error);
+        this.startListeningLiveData();
+      }
+    ));
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  private setNewTimespan(end: number) {
+  private setNewTimespan() {
+    const end = this.additionalData[0].data[this.additionalData[0].data.length - 1].timestamp;
     let diff = MAX_TIMESPAN_CHART;
     if (this.additionalData[0].data[0].timestamp) {
       diff = end - this.additionalData[0].data[0].timestamp;
