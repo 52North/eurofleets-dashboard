@@ -67,7 +67,7 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     this.datastream = ds;
 
     const options = new DatasetOptions('addData', 'red');
-    options.pointRadius = 2;
+    options.pointRadius = 3;
     options.lineWidth = 2;
     this.additionalData = [{
       internalId: '',
