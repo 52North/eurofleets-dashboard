@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observation } from '@helgoland/core';
+import { Observation, ObservationExpandParams, ObservationSelectParams, StaFilter } from '@helgoland/core';
 import { MqttService } from 'ngx-mqtt';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -21,11 +21,21 @@ export class StaMqttInterfaceService {
     });
   }
 
-  public subscribeDatastreamObservations(datasetId: string): Observable<Observation> {
+  public subscribeDatastreamObservations(
+    datasetId: string,
+    params?: StaFilter<ObservationSelectParams, ObservationExpandParams>
+  ): Observable<Observation> {
     // TODO: add filterung: $select=result,phenomenonTime
     return this.mqttService.observe(`Datastreams(${datasetId})/Observations`).pipe(
       map(message => JSON.parse(message.payload.toString()) as Observation),
-      // tap(observation => console.log(`Observation for ${datasetId} with result: ${observation.result}`))
+      tap(observation => console.log(`Observation for ${datasetId} with result: ${JSON.stringify(observation, null, 2)}`))
+    );
+  }
+
+  public subscribeObservations(): Observable<Observation> {
+    return this.mqttService.observe(`Observations`).pipe(
+      map(message => JSON.parse(message.payload.toString()) as Observation),
+      tap(observation => console.log(`Observation: ${observation.result}`))
     );
   }
 
