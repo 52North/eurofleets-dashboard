@@ -7,4 +7,5 @@ export interface IAppConfig {
             path: string
         };
     };
+    apiUrl: string;
 }

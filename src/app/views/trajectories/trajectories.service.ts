@@ -22,13 +22,13 @@ export class TrajectoriesService extends DatasetService<DatasetOptions> {
     }
 
     protected saveState() {
-        this.localStorage.save(TRAJECTORY_IDS_PARAM, this.datasetIds);
-        this.localStorage.save(TRAJECTORY_OPTIONS_PARAM, Array.from(this.datasetOptions.values()));
+        // this.localStorage.save(TRAJECTORY_IDS_PARAM, this.datasetIds);
+        // this.localStorage.save(TRAJECTORY_OPTIONS_PARAM, Array.from(this.datasetOptions.values()));
     }
 
     protected loadState() {
-        this.datasetIds = this.localStorage.loadArray<string>(TRAJECTORY_IDS_PARAM) || [];
-        const datasetOptions = this.localStorage.loadArray<DatasetOptions>(TRAJECTORY_OPTIONS_PARAM) || [];
-        datasetOptions.forEach(e => this.datasetOptions.set(e.internalId, e));
+        // this.datasetIds = this.localStorage.loadArray<string>(TRAJECTORY_IDS_PARAM) || [];
+        // const datasetOptions = this.localStorage.loadArray<DatasetOptions>(TRAJECTORY_OPTIONS_PARAM) || [];
+        // datasetOptions.forEach(e => this.datasetOptions.set(e.internalId, e));
     }
 }

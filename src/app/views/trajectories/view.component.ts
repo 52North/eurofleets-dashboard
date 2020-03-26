@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
 import { isUndefined } from 'util';
 
 import { SHIP_ICON } from '../../components/live-map/live-map.component';
+import { AppConfig } from './../../config/app.config';
 import { TrajectoriesService } from './trajectories.service';
 
 const DEFAULT_START_TIME_INTERVAL = 500;
@@ -72,6 +73,12 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     private lastInterval: number;
     public highlightIndex: number;
 
+    private ids = [
+        { id: '2', color: 'red' },
+        { id: '3', color: 'blue' },
+        { id: '4', color: 'green' },
+    ];
+
     constructor(
         private trajectorySrvc: TrajectoriesService,
         private servicesConnector: HelgolandServicesConnector,
@@ -80,9 +87,10 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     ) { }
 
     public ngOnInit() {
-        this.trajectorySrvc.addDataset('http://localhost:8080/api/__2', new DatasetOptions('http://localhost:8080/api/__2', 'red'));
-        this.trajectorySrvc.addDataset('http://localhost:8080/api/__3', new DatasetOptions('http://localhost:8080/api/__3', 'blue'));
-        this.trajectorySrvc.addDataset('http://localhost:8080/api/__4', new DatasetOptions('http://localhost:8080/api/__4', 'green'));
+        this.ids.forEach(e => {
+            const internalID = this.internalIdHandler.createInternalId(AppConfig.settings.apiUrl, e.id);
+            this.trajectorySrvc.addDataset(internalID, new DatasetOptions(internalID, e.color));
+        });
         this.datasetIds = this.trajectorySrvc.datasetIds;
         this.options = this.trajectorySrvc.datasetOptions;
         if (this.trajectorySrvc.hasDatasets()) {

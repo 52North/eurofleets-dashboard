@@ -6,5 +6,6 @@
             "port": "${MQTT_PORT}",
             "path": "${MQTT_PATH}"
         }
-    }
+    },
+    "apiUrl": "${API_URL}"
 }
