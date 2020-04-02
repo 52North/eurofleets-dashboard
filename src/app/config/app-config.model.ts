@@ -12,4 +12,6 @@ export interface IAppConfig {
         phenomenonDomainId: string;
         color: string;
     }[];
+    dashboardDatastreamMapping: string[];
+    courseOverGroudMapping: string;
 }

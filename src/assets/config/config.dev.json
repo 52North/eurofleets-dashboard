@@ -69,5 +69,24 @@
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/EWSTEN01/",
             "color": "7"
         }
-    ]
+    ],
+    "dashboardDatastreamMapping": [
+        "course_over_ground",
+        "heading",
+        "speed_over_ground",
+        "air_temperature",
+        "humidity",
+        "pressure",
+        "wind_direction",
+        "wind_gust",
+        "wind_mean",
+        "water_temperature",
+        "depth",
+        "solar_radiation",
+        "salinity",
+        "raw_fluorometry",
+        "density",
+        "conductivity"
+    ],
+    "courseOverGroudMapping": "course_over_ground"
 }

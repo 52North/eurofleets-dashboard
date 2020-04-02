@@ -7,5 +7,86 @@
             "path": "/mqtt"
         }
     },
-    "apiUrl": "http://localhost:8080/api/"
+    "apiUrl": "http://localhost:8080/api/",
+    "trajectoryDatasets": [
+        {
+            "_label": "Course over Ground",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
+            "color": "red"
+        },
+        {
+            "_label": "Air temperature",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/CDTA/",
+            "color": "red"
+        },
+        {
+            "_label": "Atmospheric Pressure",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/CAPH/",
+            "color": "blue"
+        },
+        {
+            "_label": "Conductivity",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/CNDC/",
+            "color": "19"
+        },
+        {
+            "_label": "Density (SIGMA-T)",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/SIGT/",
+            "color": "20"
+        },
+        {
+            "_label": "Depth",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P07/current/CFV13N17/",
+            "color": "6"
+        },
+        {
+            "_label": "Heading",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/HDNGGP01/",
+            "color": "4"
+        },
+        {
+            "_label": "Salinity",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/PSAL/",
+            "color": "17"
+        },
+        {
+            "_label": "Speed over ground",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/APSAGP01/",
+            "color": "8"
+        },
+        {
+            "_label": "Water Temperature",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/TEMP/",
+            "color": "16"
+        },
+        {
+            "_label": "Wind Direction",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/EGTDZZ01/",
+            "color": "11"
+        },
+        {
+            "_label": "Wind mean",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/EWSTEN01/",
+            "color": "7"
+        }
+    ],
+    "dashboardDatastreamMapping": [
+        "course_over_ground",
+        "heading",
+        "speed_over_ground",
+        "air_temperature",
+        "humidity",
+        "pressure",
+        "wind_direction",
+        "wind_gust",
+        "wind_mean",
+        "water_temperature",
+        "depth",
+        "solar_radiation",
+        "salinity",
+        "raw_fluorometry",
+        "density",
+        "conductivity"
+    ],
+    "courseOverGroudMapping": "course_over_ground"
 }
