@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
+    ApiV3InterfaceService,
     DatasetOptions,
     DatasetType,
     HelgolandServicesConnector,
     HelgolandTrajectory,
-    InternalIdHandler,
     LocatedTimeValueEntry,
     Timespan,
 } from '@helgoland/core';
@@ -17,7 +18,7 @@ import { isUndefined } from 'util';
 
 import { SHIP_ICON } from '../../components/live-map/live-map.component';
 import { AppConfig } from './../../config/app.config';
-import { TrajectoriesService } from './trajectories.service';
+import { MatRadioChange } from '@angular/material/radio';
 
 const DEFAULT_START_TIME_INTERVAL = 500;
 
@@ -36,7 +37,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
 
     public timespan: Timespan;
 
-    public datasetIds: Array<string>;
+    public datasetIds: Array<string> = [];
 
     public trajectory: HelgolandTrajectory;
 
@@ -44,7 +45,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
 
     public geometry: GeoJSON.LineString;
 
-    public options: Map<string, DatasetOptions>;
+    public options: Map<string, DatasetOptions> = new Map();
 
     public editableOption: DatasetOptions;
 
@@ -73,48 +74,54 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     private lastInterval: number;
     public highlightIndex: number;
 
-    private ids = [
-        { id: '2', color: 'red' },
-        { id: '3', color: 'blue' },
-        { id: '4', color: 'green' },
-    ];
-
     constructor(
-        private trajectorySrvc: TrajectoriesService,
         private servicesConnector: HelgolandServicesConnector,
-        private internalIdHandler: InternalIdHandler,
+        private apiV3: ApiV3InterfaceService,
+        private route: ActivatedRoute,
         private mapCache: MapCache
     ) { }
 
     public ngOnInit() {
-        this.ids.forEach(e => {
-            const internalID = this.internalIdHandler.createInternalId(AppConfig.settings.apiUrl, e.id);
-            this.trajectorySrvc.addDataset(internalID, new DatasetOptions(internalID, e.color));
+        this.route.paramMap.subscribe(params => {
+            this.fetchProcedures(params.get('id'));
         });
-        this.datasetIds = this.trajectorySrvc.datasetIds;
-        this.options = this.trajectorySrvc.datasetOptions;
-        if (this.trajectorySrvc.hasDatasets()) {
-            this.loading = true;
-            const internalId = this.internalIdHandler.resolveInternalId(this.datasetIds[0]);
-            this.servicesConnector.getDataset(internalId, { type: DatasetType.Trajectory }).subscribe(
-                trajectory => {
+    }
+
+    private fetchProcedures(id: string) {
+        this.apiV3.getProcedures(AppConfig.settings.apiUrl).subscribe(procs => {
+            const proc = procs.find(e => e.domainId === id);
+            if (proc) {
+                this.findDatasets(proc.id);
+            }
+        });
+    }
+
+    private findDatasets(procId: string) {
+        this.apiV3.getDatasets(AppConfig.settings.apiUrl, { procedure: procId, expanded: true }).subscribe(datasets => {
+            if (datasets.length > 0) {
+                AppConfig.settings.trajectoryDatasets.forEach(entry => {
+                    const ds = datasets.find(e => e.parameters.phenomenon.domainId === entry.phenomenonDomainId);
+                    if (ds) {
+                        this.datasetIds.push(ds.internalId);
+                        this.options.set(ds.internalId, new DatasetOptions(ds.internalId, entry.color));
+                    }
+                });
+                this.servicesConnector.getDataset(datasets[0].internalId, { type: DatasetType.Trajectory }).subscribe(trajectory => {
                     this.trajectory = trajectory;
                     this.timespan = new Timespan(trajectory.firstValue.timestamp, trajectory.lastValue.timestamp);
                     this.selectedTimespan = this.timespan;
-                    this.servicesConnector.getDatasetData(trajectory, this.timespan).subscribe(
-                        data => {
-                            this.geometry = {
-                                type: 'LineString',
-                                coordinates: [],
-                            };
-                            this.graphData = data.values;
-                            data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
-                            this.loading = false;
-                        }
-                    );
-                }
-            );
-        }
+                    this.servicesConnector.getDatasetData(trajectory, this.timespan).subscribe(data => {
+                        this.geometry = {
+                            type: 'LineString',
+                            coordinates: [],
+                        };
+                        this.graphData = data.values;
+                        data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
+                        this.loading = false;
+                    });
+                });
+            }
+        });
     }
 
     public ngOnDestroy(): void {
@@ -164,34 +171,12 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
         }
     }
 
-    public onDottedChanged(dotted: boolean) {
-        this.graphOptions.dotted = dotted;
-    }
-
-    public onAddDataset(entry: DatasetOptions) {
-        this.trajectorySrvc.addDataset(entry.internalId, new DatasetOptions(entry.internalId, entry.color));
-    }
-
-    public onRemoveDataset(internalId: string) {
-        this.trajectorySrvc.removeDataset(internalId);
-    }
-
-    public editOptions(option: DatasetOptions) {
-        this.editableOption = option;
-        // this.modalService.open(this.modalTrajectoryOptionsEditor);
-    }
-
-    public updateOption(option: DatasetOptions) {
-        this.editableOption.color = this.tempColor;
-        this.trajectorySrvc.updateDatasetOptions(this.editableOption, this.editableOption.internalId);
-    }
-
     public hasVisibleDatasets(): boolean {
         return Array.from(this.options.values()).some(entry => entry.visible);
     }
 
-    public toggleAxisType(bla: any) {
-        this.graphOptions.axisType = bla.value;
+    public toggleAxisType(change: MatRadioChange) {
+        this.graphOptions.axisType = change.value;
     }
 
     public startReplay() {

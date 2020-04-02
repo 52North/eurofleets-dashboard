@@ -1,10 +1,10 @@
 <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="0.5">
 
-  <div class="element" fxFlex.gt-md="50" fxFlex.md="50" fxFlex.sm="100">
-    <app-live-map></app-live-map>
+  <div class="element" fxFlex.gt-md="33" fxFlex.md="50" fxFlex.sm="100">
+    <app-live-map [courseOverGround]="courseOverGroundID"></app-live-map>
   </div>
 
-  <div *ngFor="let ds of datastreams" class="element" fxFlex.gt-md="50" fxFlex.md="50" fxFlex.sm="100">
+  <div *ngFor="let ds of datastreams" class="element" fxFlex.gt-md="33" fxFlex.md="50" fxFlex.sm="100">
     <app-display-live-value [datastreamId]="ds"></app-display-live-value>
   </div>
 

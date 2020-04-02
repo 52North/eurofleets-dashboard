@@ -22,7 +22,7 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
 
   public subscriptions: Subscription[] = [];
 
-  public additionalData: AdditionalData[] = [];
+  public additionalData: AdditionalData;
   public timespan: Timespan;
 
   public graphOptions: D3PlotOptions = {
@@ -60,7 +60,7 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     this.observation = observation;
     const timestamp = new Date(observation.phenomenonTime).getTime();
     const value = Number.parseFloat(observation.result);
-    this.additionalData[0].data.push({ timestamp, value });
+    this.additionalData.data.push({ timestamp, value });
   }
 
   private setDatastream(ds: Datastream): void {
@@ -69,15 +69,15 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     const options = new DatasetOptions('addData', 'red');
     options.pointRadius = 3;
     options.lineWidth = 2;
-    this.additionalData = [{
+    this.additionalData = {
       internalId: '',
       yaxisLabel: ds.unitOfMeasurement.symbol,
       datasetOptions: options,
       data: []
-    }];
+    };
 
     this.subscriptions.push(this.sta.getDatastreamObservationsRelation(AppConfig.settings.sta.http, this.datastreamId, {
-      $top: 2,
+      $top: 10,
       $orderby: 'phenomenonTime desc',
     }).subscribe(
       obs => {
@@ -97,13 +97,15 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
   }
 
   private setNewTimespan() {
-    const end = this.additionalData[0].data[this.additionalData[0].data.length - 1].timestamp;
-    let diff = MAX_TIMESPAN_CHART;
-    if (this.additionalData[0].data[0].timestamp) {
-      diff = end - this.additionalData[0].data[0].timestamp;
+    if (this.additionalData.data.length > 0) {
+      const end = this.additionalData.data[this.additionalData.data.length - 1].timestamp;
+      let diff = MAX_TIMESPAN_CHART;
+      if (this.additionalData.data[0].timestamp) {
+        diff = end - this.additionalData.data[0].timestamp;
+      }
+      diff = diff > MAX_TIMESPAN_CHART ? MAX_TIMESPAN_CHART : diff;
+      this.timespan = new Timespan(end - diff, end);
     }
-    diff = diff > MAX_TIMESPAN_CHART ? MAX_TIMESPAN_CHART : diff;
-    this.timespan = new Timespan(end - diff, end);
   }
 
   public timespanChanged(timespan: Timespan) {

@@ -32,8 +32,8 @@
       </div>
       <div class="legend">
         <div *ngFor="let id of datasetIds" class="legend-entry">
-          <app-custom-trajectory-entry [datasetId]="id" [datasetOptions]="options.get(id)"
-            (onEditOptions)="editOptions($event)"></app-custom-trajectory-entry>
+          <app-custom-trajectory-entry [datasetId]="id" [datasetOptions]="options.get(id)">
+          </app-custom-trajectory-entry>
         </div>
       </div>
       <div class="chart-buttons">

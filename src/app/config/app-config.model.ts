@@ -8,4 +8,8 @@ export interface IAppConfig {
         };
     };
     apiUrl: string;
+    trajectoryDatasets: {
+        phenomenonDomainId: string;
+        color: string;
+    }[];
 }

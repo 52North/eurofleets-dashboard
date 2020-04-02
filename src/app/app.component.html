@@ -1,9 +1,10 @@
-<mat-toolbar color="primary">
-  <div class="menu">
+<div class="menu">
+  <mat-toolbar color="primary">
+    <button mat-button routerLink="/selection" routerLinkActive="mat-accent">Selection</button>
     <button mat-button routerLink="/dashboard" routerLinkActive="mat-accent">Live</button>
     <button mat-button routerLink="/trajectories" routerLinkActive="mat-accent">Trajectories</button>
-  </div>
-</mat-toolbar>
+  </mat-toolbar>
+</div>
 
 <div class="content">
   <router-outlet></router-outlet>

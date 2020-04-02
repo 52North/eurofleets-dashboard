@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -25,6 +26,7 @@ import { DisplayLiveValueComponent } from './components/display-live-value/displ
 import { LiveMapComponent } from './components/live-map/live-map.component';
 import { AppConfig } from './config/app.config';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { ShipSelectionComponent } from './views/ship-selection/ship-selection.component';
 import {
   CustomTrajectoryEntryComponent,
 } from './views/trajectories/custom-trajectory-entry/custom-trajectory-entry.component';
@@ -47,6 +49,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DisplayLiveValueComponent,
     LiveMapComponent,
     TrajectoriesViewComponent,
+    ShipSelectionComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -61,6 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatListModule,
     MatRadioModule,
     MatToolbarModule,
     TranslateModule.forRoot({ loader: { provide: TranslateLoader, useFactory: HttpLoaderFactory, deps: [HttpClient] } }),
