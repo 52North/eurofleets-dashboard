@@ -1,0 +1,9 @@
+<h3>Select a ship:</h3>
+<mat-list>
+  <mat-list-item *ngFor="let ship of data.ships">
+    <button mat-button (click)="selectShip(ship)">
+      <!-- <mat-icon>ship</mat-icon> -->
+      <span>{{ship.name}}</span>
+    </button>
+  </mat-list-item>
+</mat-list>

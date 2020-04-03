@@ -3,9 +3,11 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,11 +24,11 @@ import { AppComponent } from './app.component';
 import {
   CustomD3TrajectoryGraphComponent,
 } from './components/custom-d3-trajectory-graph/custom-d3-trajectory-graph.component';
+import { DialogShipSelectionComponent } from './components/dialog-ship-selection/dialog-ship-selection.component';
 import { DisplayLiveValueComponent } from './components/display-live-value/display-live-value.component';
 import { LiveMapComponent } from './components/live-map/live-map.component';
 import { AppConfig } from './config/app.config';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
-import { ShipSelectionComponent } from './views/ship-selection/ship-selection.component';
 import {
   CustomTrajectoryEntryComponent,
 } from './views/trajectories/custom-trajectory-entry/custom-trajectory-entry.component';
@@ -41,6 +43,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
+  entryComponents: [
+    DialogShipSelectionComponent,
+  ],
   declarations: [
     AppComponent,
     CustomD3TrajectoryGraphComponent,
@@ -49,7 +54,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DisplayLiveValueComponent,
     LiveMapComponent,
     TrajectoriesViewComponent,
-    ShipSelectionComponent,
+    DialogShipSelectionComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -62,7 +67,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     HelgolandModificationModule,
     HelgolandSelectorModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatCardModule,
+    MatDialogModule,
     MatIconModule,
     MatListModule,
     MatRadioModule,

@@ -1,10 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Thing } from '@helgoland/core';
+
+import { ShipSelectionService } from './services/ship-selection/ship-selection.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'eurofleets-dashboard';
+export class AppComponent implements OnInit {
+
+  public selectedShip: Thing;
+
+  constructor(
+    public shipSelection: ShipSelectionService
+  ) { }
+
+  ngOnInit(): void {
+    this.shipSelection.selectedShip.subscribe(ship => this.selectedShip = ship);
+  }
+
 }

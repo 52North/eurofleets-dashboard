@@ -13,3 +13,16 @@ body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+
+.mat-snack-bar-container {
+
+    &.warn {
+        background-color: #b70303;
+        color: white;
+
+        .mat-simple-snackbar-action {
+            color: white;
+        }
+    }
+}

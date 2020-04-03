@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatRadioChange } from '@angular/material/radio';
 import {
     ApiV3InterfaceService,
     DatasetOptions,
@@ -18,7 +18,7 @@ import { isUndefined } from 'util';
 
 import { SHIP_ICON } from '../../components/live-map/live-map.component';
 import { AppConfig } from './../../config/app.config';
-import { MatRadioChange } from '@angular/material/radio';
+import { ShipSelectionService } from '../../services/ship-selection/ship-selection.service';
 
 const DEFAULT_START_TIME_INTERVAL = 500;
 
@@ -76,15 +76,13 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
 
     constructor(
         private servicesConnector: HelgolandServicesConnector,
+        private shipSelection: ShipSelectionService,
         private apiV3: ApiV3InterfaceService,
-        private route: ActivatedRoute,
         private mapCache: MapCache
     ) { }
 
     public ngOnInit() {
-        this.route.paramMap.subscribe(params => {
-            this.fetchProcedures(params.get('id'));
-        });
+        this.shipSelection.selectedShip.subscribe(ship => this.fetchProcedures(ship['@iot.id']));
     }
 
     private fetchProcedures(id: string) {

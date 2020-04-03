@@ -1,6 +1,8 @@
 <div class="menu">
   <mat-toolbar color="primary">
-    <button mat-button routerLink="/selection" routerLinkActive="mat-accent">Selection</button>
+    <button mat-button *ngIf="selectedShip" (click)="shipSelection.openSelection()">
+      Selected Ship: {{selectedShip.name}}
+    </button>
     <button mat-button routerLink="/dashboard" routerLinkActive="mat-accent">Live</button>
     <button mat-button routerLink="/trajectories" routerLinkActive="mat-accent">Trajectories</button>
   </mat-toolbar>
