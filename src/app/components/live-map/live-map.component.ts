@@ -1,9 +1,10 @@
 import 'leaflet-rotatedmarker';
 
-import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { Observation } from '@helgoland/core';
 import { LayerMap, MapCache } from '@helgoland/map';
 import * as L from 'leaflet';
+import { Subscription } from 'rxjs';
 
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
 
@@ -18,7 +19,7 @@ export const SHIP_ICON = L.icon({
   templateUrl: './live-map.component.html',
   styleUrls: ['./live-map.component.scss']
 })
-export class LiveMapComponent implements AfterViewInit, OnChanges {
+export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   public mapOptions: L.MapOptions = { dragging: true, zoomControl: true, boxZoom: true };
   public layerControlOptions: L.Control.LayersOptions = { position: 'bottomleft' };
@@ -31,6 +32,7 @@ export class LiveMapComponent implements AfterViewInit, OnChanges {
   private polyLine: L.Polyline;
   private map: L.Map;
   private ship: L.Marker;
+  private positionSubscription: Subscription;
 
   constructor(
     private mapCache: MapCache,
@@ -44,10 +46,14 @@ export class LiveMapComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.courseOverGround && this.courseOverGround) {
-      this.staMqtt.subscribeDatastreamObservations(this.courseOverGround).subscribe(
+      this.positionSubscription = this.staMqtt.subscribeDatastreamObservations(this.courseOverGround).subscribe(
         observation => this.setValues(observation)
       );
     }
+  }
+
+  ngOnDestroy(): void {
+    this.positionSubscription.unsubscribe();
   }
 
   setValues(observation: Observation) {

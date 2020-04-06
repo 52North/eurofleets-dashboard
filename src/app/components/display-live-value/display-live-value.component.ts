@@ -49,6 +49,10 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     ));
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
   private startListeningLiveData() {
     this.subscriptions.push(this.staMqtt.subscribeDatastreamObservations(this.datastreamId).subscribe(observation => {
       this.addObservationToDataArray(observation);
@@ -90,10 +94,6 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
         this.startListeningLiveData();
       }
     ));
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   private setNewTimespan() {
