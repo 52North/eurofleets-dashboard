@@ -47,7 +47,8 @@ export class ShipSelectionService {
       ships => {
         const dialogRef = this.dialog.open(DialogShipSelectionComponent, {
           width: '250px',
-          data: { ships } as DialogShipData
+          data: { ships } as DialogShipData,
+          disableClose: true
         });
 
         dialogRef.afterClosed().subscribe(selectedShip => {
