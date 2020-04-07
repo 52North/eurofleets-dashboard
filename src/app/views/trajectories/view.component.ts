@@ -17,8 +17,8 @@ import { map } from 'rxjs/operators';
 import { isUndefined } from 'util';
 
 import { SHIP_ICON } from '../../components/live-map/live-map.component';
-import { AppConfig } from './../../config/app.config';
 import { ShipSelectionService } from '../../services/ship-selection/ship-selection.service';
+import { AppConfig } from './../../config/app.config';
 
 const DEFAULT_START_TIME_INTERVAL = 500;
 
@@ -95,6 +95,8 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     private findDatasets(procId: string) {
+        this.datasetIds = [];
+        this.options = new Map();
         this.apiV3.getDatasets(AppConfig.settings.apiUrl, { procedure: procId, expanded: true }).subscribe(datasets => {
             if (datasets.length > 0) {
                 AppConfig.settings.trajectoryDatasets.forEach(entry => {
@@ -104,20 +106,25 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
                         this.options.set(ds.internalId, new DatasetOptions(ds.internalId, entry.color));
                     }
                 });
-                this.servicesConnector.getDataset(datasets[0].internalId, { type: DatasetType.Trajectory }).subscribe(trajectory => {
-                    this.trajectory = trajectory;
-                    this.timespan = new Timespan(trajectory.firstValue.timestamp, trajectory.lastValue.timestamp);
-                    this.selectedTimespan = this.timespan;
-                    this.servicesConnector.getDatasetData(trajectory, this.timespan).subscribe(data => {
-                        this.geometry = {
-                            type: 'LineString',
-                            coordinates: [],
-                        };
-                        this.graphData = data.values;
-                        data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
-                        this.loading = false;
+                const refDs = datasets.find(e => e.parameters.phenomenon.domainId === AppConfig.settings.courseOverGroundTrajectoryMapping);
+                if (refDs) {
+                    this.servicesConnector.getDataset(refDs.internalId, { type: DatasetType.Trajectory }).subscribe(trajectory => {
+                        this.trajectory = trajectory;
+                        this.timespan = new Timespan(trajectory.firstValue.timestamp, trajectory.lastValue.timestamp);
+                        this.selectedTimespan = this.timespan;
+                        this.servicesConnector.getDatasetData(trajectory, this.timespan).subscribe(data => {
+                            this.geometry = {
+                                type: 'LineString',
+                                coordinates: [],
+                            };
+                            this.graphData = data.values;
+                            data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
+                            this.loading = false;
+                        });
                     });
-                });
+                } else {
+                    console.error('No course over ground dataset found.');
+                }
             }
         });
     }

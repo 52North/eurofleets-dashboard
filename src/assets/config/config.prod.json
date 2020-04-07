@@ -8,6 +8,7 @@
         }
     },
     "apiUrl": "http://localhost:8080/api/",
+    "courseOverGroundTrajectoryMapping": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
     "trajectoryDatasets": [
         {
             "_label": "Course over Ground",
@@ -27,47 +28,47 @@
         {
             "_label": "Conductivity",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/CNDC/",
-            "color": "19"
+            "color": "#ffb0a1"
         },
         {
             "_label": "Density (SIGMA-T)",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/SIGT/",
-            "color": "20"
+            "color": "#5c2c00"
         },
         {
             "_label": "Depth",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P07/current/CFV13N17/",
-            "color": "6"
+            "color": "#7a5e85"
         },
         {
             "_label": "Heading",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/HDNGGP01/",
-            "color": "4"
+            "color": "cf36ff"
         },
         {
             "_label": "Salinity",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/PSAL/",
-            "color": "17"
+            "color": "#5496ff"
         },
         {
             "_label": "Speed over ground",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/APSAGP01/",
-            "color": "8"
+            "color": "#662500"
         },
         {
             "_label": "Water Temperature",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/TEMP/",
-            "color": "16"
+            "color": "#bf6900"
         },
         {
             "_label": "Wind Direction",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/EGTDZZ01/",
-            "color": "11"
+            "color": "#a17800"
         },
         {
             "_label": "Wind mean",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/EWSTEN01/",
-            "color": "7"
+            "color": "#72cc85"
         }
     ],
     "dashboardDatastreamMapping": [
@@ -88,5 +89,5 @@
         "density",
         "conductivity"
     ],
-    "courseOverGroudMapping": "course_over_ground"
+    "courseOverGroudLiveMapping": "course_over_ground"
 }
