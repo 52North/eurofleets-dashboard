@@ -1,10 +1,17 @@
 <div class="wrapper">
-  <div class="header-wrapper" *ngIf="trajectory">
-    <span *ngIf="trajectory.parameters.feature.label"> {{trajectory.parameters.feature.label}} </span>
+  <div class="header-wrapper" *ngIf="features">
+      <div class="track-selection">
+        <div style="white-space: nowrap;">Selected Track: </div>
+        <mat-select [value]="selectedFeatureId" (selectionChange)="selectFeature($event)">
+          <mat-option *ngFor="let feature of features" [value]="feature.id">
+            {{feature.properties.label}}
+          </mat-option>
+        </mat-select>
+      </div>
   </div>
 
   <div class="flex-wrapper">
-    <n52-geometry-map-viewer class="map" mapId="trajectory" [geometry]="geometry" [highlight]="highlightGeometry"
+    <n52-geometry-map-viewer class="map" [mapId]="mapId" [geometry]="geometry" [highlight]="highlightGeometry"
       [zoomTo]="zoomToGeometry"></n52-geometry-map-viewer>
   </div>
 

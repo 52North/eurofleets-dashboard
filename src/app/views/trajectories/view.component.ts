@@ -1,6 +1,9 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
+import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
+    ApiV3Feature,
     ApiV3InterfaceService,
     DatasetOptions,
     DatasetType,
@@ -74,59 +77,106 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     private lastInterval: number;
     public highlightIndex: number;
 
+    public procedureId: string;
+    public features: ApiV3Feature[];
+    public selectedFeatureId: string;
+
+    public readonly mapId = 'trajectory';
+
     constructor(
         private servicesConnector: HelgolandServicesConnector,
         private shipSelection: ShipSelectionService,
         private apiV3: ApiV3InterfaceService,
-        private mapCache: MapCache
+        private mapCache: MapCache,
+        private snackBar: MatSnackBar,
     ) { }
 
     public ngOnInit() {
         this.shipSelection.selectedShip.subscribe(ship => this.fetchProcedures(ship['@iot.id']));
     }
 
-    private fetchProcedures(id: string) {
-        this.apiV3.getProcedures(AppConfig.settings.apiUrl).subscribe(procs => {
-            const proc = procs.find(e => e.domainId === id);
-            if (proc) {
-                this.findDatasets(proc.id);
-            }
-        });
+    public selectFeature(change: MatSelectChange) {
+        this.getTrackInformations(change.value);
     }
 
-    private findDatasets(procId: string) {
+    private fetchProcedures(id: string) {
+        this.apiV3.getProcedures(AppConfig.settings.apiUrl).subscribe(
+            procs => {
+                const proc = procs.find(e => e.domainId === id);
+                if (proc) {
+                    this.procedureId = proc.id;
+                    this.findTracks();
+                } else {
+                    this.noShipFound();
+                }
+            },
+            error => {
+                console.error(error);
+                this.noShipFound();
+            });
+    }
+
+    private findTracks() {
+        this.apiV3.getFeatures(AppConfig.settings.apiUrl, { procedure: this.procedureId }).subscribe(
+            features => {
+                if (features.length > 0) {
+                    this.selectedFeatureId = features[0].id;
+                    this.getTrackInformations(this.selectedFeatureId);
+                    this.features = features;
+                } else {
+                    this.noTracksFound();
+                }
+            },
+            error => {
+                console.error(error);
+                this.noTracksFound();
+            });
+    }
+
+    private getTrackInformations(featureId: string) {
         this.datasetIds = [];
         this.options = new Map();
-        this.apiV3.getDatasets(AppConfig.settings.apiUrl, { procedure: procId, expanded: true }).subscribe(datasets => {
-            if (datasets.length > 0) {
-                AppConfig.settings.trajectoryDatasets.forEach(entry => {
-                    const ds = datasets.find(e => e.parameters.phenomenon.domainId === entry.phenomenonDomainId);
-                    if (ds) {
-                        this.datasetIds.push(ds.internalId);
-                        this.options.set(ds.internalId, new DatasetOptions(ds.internalId, entry.color));
-                    }
-                });
-                const refDs = datasets.find(e => e.parameters.phenomenon.domainId === AppConfig.settings.courseOverGroundTrajectoryMapping);
-                if (refDs) {
-                    this.servicesConnector.getDataset(refDs.internalId, { type: DatasetType.Trajectory }).subscribe(trajectory => {
-                        this.trajectory = trajectory;
-                        this.timespan = new Timespan(trajectory.firstValue.timestamp, trajectory.lastValue.timestamp);
-                        this.selectedTimespan = this.timespan;
-                        this.servicesConnector.getDatasetData(trajectory, this.timespan).subscribe(data => {
-                            this.geometry = {
-                                type: 'LineString',
-                                coordinates: [],
-                            };
-                            this.graphData = data.values;
-                            data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
-                            this.loading = false;
-                        });
+        this.apiV3.getDatasets(
+            AppConfig.settings.apiUrl,
+            { procedure: this.procedureId, feature: featureId, expanded: true }
+        ).subscribe(
+            datasets => {
+                if (datasets.length > 0) {
+                    AppConfig.settings.trajectoryDatasets.forEach(entry => {
+                        const ds = datasets.find(e => e.parameters.phenomenon.domainId === entry.phenomenonDomainId);
+                        if (ds) {
+                            this.datasetIds.push(ds.internalId);
+                            this.options.set(ds.internalId, new DatasetOptions(ds.internalId, entry.color));
+                        }
                     });
+                    const refDs =
+                        datasets.find(e => e.parameters.phenomenon.domainId === AppConfig.settings.courseOverGroundTrajectoryMapping);
+                    if (refDs) {
+                        this.servicesConnector.getDataset(refDs.internalId, { type: DatasetType.Trajectory }).subscribe(trajectory => {
+                            this.trajectory = trajectory;
+                            this.timespan = new Timespan(trajectory.firstValue.timestamp, trajectory.lastValue.timestamp);
+                            this.selectedTimespan = this.timespan;
+                            this.servicesConnector.getDatasetData(trajectory, this.timespan).subscribe(data => {
+                                this.geometry = {
+                                    type: 'LineString',
+                                    coordinates: [],
+                                };
+                                this.graphData = data.values;
+                                data.values.forEach(entry => this.geometry.coordinates.push(entry.geometry.coordinates));
+                                this.loading = false;
+                            });
+                        });
+                    } else {
+                        console.error('No course over ground dataset found.');
+                    }
                 } else {
-                    console.error('No course over ground dataset found.');
+                    this.noTrackInformationsFound();
                 }
-            }
-        });
+            },
+            error => {
+                console.error(error);
+                this.noTrackInformationsFound();
+            });
     }
 
     public ngOnDestroy(): void {
@@ -166,7 +216,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
             const lon = this.geometry.coordinates[idx][0];
             const coords: L.LatLngTuple = [lat, lon];
             const angle = this.graphData[idx].value - 90;
-            const lmap = this.mapCache.getMap('trajectory');
+            const lmap = this.mapCache.getMap(this.mapId);
             if (!this.ship) {
                 this.ship = L.marker(coords, { icon: SHIP_ICON, rotationAngle: angle }).addTo(lmap);
             } else {
@@ -225,6 +275,27 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
         this.replaySubscription.unsubscribe();
         this.lastInterval = this.lastInterval / 2;
         this.runReplay(this.lastInterval, this.lastReplayStep);
+    }
+
+    private noShipFound() {
+        this.snackBar.open('Couldn\'t find a ship', 'close', {
+            verticalPosition: 'top',
+            panelClass: 'warn'
+        });
+    }
+
+    private noTracksFound() {
+        this.snackBar.open('Couldn\'t find a track for the ship', 'close', {
+            verticalPosition: 'top',
+            panelClass: 'warn'
+        });
+    }
+
+    private noTrackInformationsFound() {
+        this.snackBar.open('Couldn\'t find any informations about this track', 'close', {
+            verticalPosition: 'top',
+            panelClass: 'warn'
+        });
     }
 
 }

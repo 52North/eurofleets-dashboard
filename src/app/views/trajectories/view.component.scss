@@ -7,6 +7,13 @@
         .header-wrapper {
             text-align: center;
             padding: 10px;
+
+            .track-selection {
+                width: 500px;
+                margin: auto;
+                display: flex;
+                flex-direction: row;
+            }
         }
 
         .flex-wrapper {

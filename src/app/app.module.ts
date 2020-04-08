@@ -7,6 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -67,12 +68,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     HelgolandModificationModule,
     HelgolandSelectorModule,
     MatButtonModule,
-    MatSnackBarModule,
     MatCardModule,
     MatDialogModule,
     MatIconModule,
     MatListModule,
     MatRadioModule,
+    MatSelectModule,
+    MatSnackBarModule,
     MatToolbarModule,
     TranslateModule.forRoot({ loader: { provide: TranslateLoader, useFactory: HttpLoaderFactory, deps: [HttpClient] } }),
   ],
