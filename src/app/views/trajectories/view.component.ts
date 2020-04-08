@@ -136,6 +136,9 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     private getTrackInformations(featureId: string) {
         this.datasetIds = [];
         this.options = new Map();
+        if (this.ship) {
+            this.ship.remove();
+        }
         this.apiV3.getDatasets(
             AppConfig.settings.apiUrl,
             { procedure: this.procedureId, feature: featureId, expanded: true }
