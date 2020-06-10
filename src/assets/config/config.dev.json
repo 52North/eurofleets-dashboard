@@ -11,12 +11,12 @@
     "courseOverGroundTrajectoryMapping": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
     "trajectoryDatasets": [
         {
-            "_label": "Course over Ground",
+            "_label": "Course Over Ground",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
             "color": "red"
         },
         {
-            "_label": "Air temperature",
+            "_label": "Air Temperature",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P02/current/CDTA/",
             "color": "red"
         },
@@ -51,7 +51,7 @@
             "color": "#5496ff"
         },
         {
-            "_label": "Speed over ground",
+            "_label": "Speed Over Ground",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/APSAGP01/",
             "color": "#662500"
         },
