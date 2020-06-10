@@ -66,8 +66,8 @@
             "color": "#a17800"
         },
         {
-            "_label": "Wind mean",
-            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/EWSTEN01/",
+            "_label": "Wind Speed",
+            "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P07/current/CFSN0038/",
             "color": "#72cc85"
         }
     ],
@@ -79,8 +79,7 @@
         "humidity",
         "pressure",
         "wind_direction",
-        "wind_gust",
-        "wind_mean",
+        "wind_speed",
         "water_temperature",
         "depth",
         "solar_radiation",
