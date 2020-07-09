@@ -1,12 +1,13 @@
 import 'leaflet-rotatedmarker';
 
-import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
-import { Observation } from '@helgoland/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Observation, StaReadInterfaceService } from '@helgoland/core';
 import { LayerMap, MapCache } from '@helgoland/map';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
+import { AppConfig } from './../../config/app.config';
 
 export const SHIP_ICON = L.icon({
   iconUrl: 'assets/boot.png',
@@ -36,7 +37,8 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   constructor(
     private mapCache: MapCache,
-    private staMqtt: StaMqttInterfaceService
+    private staMqtt: StaMqttInterfaceService,
+    private sta: StaReadInterfaceService
   ) { }
 
   ngAfterViewInit(): void {
@@ -46,6 +48,15 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.courseOverGround && this.courseOverGround) {
+      this.sta.getDatastreamObservationsRelation(
+        AppConfig.settings.sta.http,
+        this.courseOverGround,
+        { $top: 1, $orderby: 'phenomenonTime desc' }
+      ).subscribe(res => {
+        if (res.value.length === 1) {
+          this.setValues(res.value[0]);
+        }
+      });
       this.positionSubscription = this.staMqtt.subscribeDatastreamObservations(this.courseOverGround).subscribe(
         observation => this.setValues(observation)
       );
@@ -63,7 +74,7 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     try {
       const course = Number.parseFloat(observation.result);
       const nameValPair = observation.parameters.find(e => e.name === 'http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry');
-      const geom = JSON.parse(nameValPair.value) as GeoJSON.Point;
+      const geom = (nameValPair.value as any) as GeoJSON.Point;
       const lat = geom.coordinates[1];
       const lon = geom.coordinates[0];
       const coords: L.LatLngTuple = [lat, lon];
