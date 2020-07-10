@@ -1,11 +1,12 @@
 import 'leaflet-rotatedmarker';
 
-import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { Observation, StaReadInterfaceService } from '@helgoland/core';
 import { LayerMap, MapCache } from '@helgoland/map';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 
+import { LAST_MEASUREMENTS_COUNT } from '../../services/constants';
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
 import { AppConfig } from './../../config/app.config';
 
@@ -51,10 +52,10 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.sta.getDatastreamObservationsRelation(
         AppConfig.settings.sta.http,
         this.courseOverGround,
-        { $top: 1, $orderby: 'phenomenonTime desc' }
+        { $top: LAST_MEASUREMENTS_COUNT, $orderby: 'phenomenonTime desc' }
       ).subscribe(res => {
-        if (res.value.length === 1) {
-          this.setValues(res.value[0]);
+        if (res.value.length > 0) {
+          res.value.reverse().forEach(e => this.setValues(e));
         }
       });
       this.positionSubscription = this.staMqtt.subscribeDatastreamObservations(this.courseOverGround).subscribe(

@@ -5,8 +5,7 @@ import { Subscription } from 'rxjs';
 
 import { AppConfig } from '../../config/app.config';
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
-
-const MAX_TIMESPAN_CHART = 600000;
+import { LAST_MEASUREMENTS_COUNT, MAX_TIMESPAN_IN_MS_FOR_CHART } from '../../services/constants';
 
 @Component({
   selector: 'app-display-live-value',
@@ -87,7 +86,7 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.push(this.sta.getDatastreamObservationsRelation(AppConfig.settings.sta.http, this.datastreamId, {
-      $top: 10,
+      $top: LAST_MEASUREMENTS_COUNT,
       $orderby: 'phenomenonTime desc',
     }).subscribe(
       obs => {
@@ -105,11 +104,11 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
   private setNewTimespan() {
     if (this.additionalData.data.length > 0) {
       const end = this.additionalData.data[this.additionalData.data.length - 1].timestamp;
-      let diff = MAX_TIMESPAN_CHART;
+      let diff = MAX_TIMESPAN_IN_MS_FOR_CHART;
       if (this.additionalData.data[0].timestamp) {
         diff = end - this.additionalData.data[0].timestamp;
       }
-      diff = diff > MAX_TIMESPAN_CHART ? MAX_TIMESPAN_CHART : diff;
+      diff = diff > MAX_TIMESPAN_IN_MS_FOR_CHART ? MAX_TIMESPAN_IN_MS_FOR_CHART : diff;
       this.timespan = new Timespan(end - diff, end);
     }
   }
