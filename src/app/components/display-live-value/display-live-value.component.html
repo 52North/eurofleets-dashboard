@@ -5,7 +5,7 @@
   <mat-card-content>
     <div>{{datastream.description}}</div>
     <div *ngIf="observation">
-      {{observation.result}} {{datastream.unitOfMeasurement.symbol}} at
+      {{observation.result | number: null: 'de' }} {{datastream.unitOfMeasurement.symbol}} at
       {{observation.phenomenonTime | date: 'd.MM.y H:mm:ss'}}
     </div>
     <div class="chart">

@@ -1,3 +1,5 @@
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
 import { Component, OnInit } from '@angular/core';
 import { Thing } from '@helgoland/core';
 
@@ -14,7 +16,10 @@ export class AppComponent implements OnInit {
 
   constructor(
     public shipSelection: ShipSelectionService
-  ) { }
+  ) { 
+
+    registerLocaleData(localeDe);
+  }
 
   ngOnInit(): void {
     this.shipSelection.selectedShip.subscribe(ship => this.selectedShip = ship);
