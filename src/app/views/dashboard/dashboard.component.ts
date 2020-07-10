@@ -11,7 +11,12 @@ import { ShipSelectionService } from '../../services/ship-selection/ship-selecti
 })
 export class DashboardComponent implements OnInit {
 
-  public datastreams: string[];
+  public datastreams: {
+    id: string;
+    hasData: boolean;
+  }[];
+
+  // public datastreams: string[];
 
   public courseOverGroundID;
 
@@ -36,7 +41,8 @@ export class DashboardComponent implements OnInit {
         AppConfig.settings.dashboardDatastreamMapping.forEach(mds => {
           const dsid = dsIDs.find(e => e.indexOf(mds) > -1);
           if (dsid) {
-            this.datastreams.push(dsid);
+            // this.datastreams.push(dsid);
+            this.datastreams.push({ id: dsid, hasData: false });
           }
         });
       });

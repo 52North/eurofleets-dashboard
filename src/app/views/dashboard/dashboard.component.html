@@ -4,8 +4,14 @@
     <app-live-map [courseOverGround]="courseOverGroundID"></app-live-map>
   </div>
 
-  <div *ngFor="let ds of datastreams" class="element" fxFlex.gt-md="33" fxFlex.md="50" fxFlex.sm="100">
-    <app-display-live-value [datastreamId]="ds"></app-display-live-value>
+  <div *ngFor="let ds of datastreams" [hidden]="!ds.hasData" class="element" fxFlex.gt-md="33" fxFlex.md="50" fxFlex.sm="100">
+    <app-display-live-value [datastreamId]="ds.id" (hasData)="ds.hasData = true"></app-display-live-value>
   </div>
+
+  <!-- <ng-container *ngFor="let ds of datastreams">
+    <div  class="element" fxFlex.gt-md="33" fxFlex.md="50" fxFlex.sm="100">
+      <app-display-live-value [datastreamId]="ds.id" (hasData)="ds.hasData = true"></app-display-live-value>
+    </div>
+  </ng-container> -->
 
 </div>

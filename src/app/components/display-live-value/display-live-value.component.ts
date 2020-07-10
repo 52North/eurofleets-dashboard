@@ -1,12 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { DatasetOptions, Datastream, Observation, StaReadInterfaceService, Timespan } from '@helgoland/core';
-import { AdditionalData, D3PlotOptions } from '@helgoland/d3';
+import { AdditionalData, D3PlotOptions, ExtendedDataD3TimeseriesGraphComponent } from '@helgoland/d3';
 import { Subscription } from 'rxjs';
 
 import { AppConfig } from '../../config/app.config';
 import { StaMqttInterfaceService } from '../../services/sta-mqtt-interface/sta-mqtt-interface.service';
 
-const MAX_TIMESPAN_CHART = 60000;
+const MAX_TIMESPAN_CHART = 600000;
 
 @Component({
   selector: 'app-display-live-value',
@@ -16,6 +16,10 @@ const MAX_TIMESPAN_CHART = 60000;
 export class DisplayLiveValueComponent implements OnInit, OnDestroy {
 
   @Input() datastreamId: string;
+
+  @Output() hasData: EventEmitter<boolean> = new EventEmitter();
+
+  @ViewChild('graph', { static: false }) graph: ExtendedDataD3TimeseriesGraphComponent;
 
   public observation: Observation;
   public datastream: Datastream;
@@ -61,6 +65,8 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
   }
 
   private addObservationToDataArray(observation: Observation) {
+    this.hasData.emit(true);
+    setTimeout(() => this.graph.redrawCompleteGraph(), 10);
     this.observation = observation;
     const timestamp = new Date(observation.phenomenonTime).getTime();
     const value = Number.parseFloat(observation.result);

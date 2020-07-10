@@ -1,13 +1,13 @@
 {
     "sta": {
-        "http": "http://localhost:8081/sta/",
+        "http": "http://localhost/sta/",
         "mqtt": {
             "hostname": "localhost",
-            "port": 8883,
+            "port": 80,
             "path": "/mqtt"
         }
     },
-    "apiUrl": "http://localhost:8080/api/",
+    "apiUrl": "http://localhost/api/",
     "courseOverGroundTrajectoryMapping": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
     "trajectoryDatasets": [
         {

@@ -9,7 +9,7 @@
       {{observation.phenomenonTime | date: 'd.MM.y H:mm:ss'}}
     </div>
     <div class="chart">
-      <n52-extended-data-d3-timeseries-graph [additionalData]="[additionalData]" [timeInterval]="timespan"
+      <n52-extended-data-d3-timeseries-graph #graph [additionalData]="[additionalData]" [timeInterval]="timespan"
         [presenterOptions]="graphOptions" (onTimespanChanged)="timespanChanged($event)">
       </n52-extended-data-d3-timeseries-graph>
     </div>
