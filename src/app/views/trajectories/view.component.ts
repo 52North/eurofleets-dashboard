@@ -117,7 +117,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     private findTracks() {
-        this.apiV3.getFeatures(AppConfig.settings.apiUrl, { procedure: this.procedureId }).subscribe(
+        this.apiV3.getFeatures(AppConfig.settings.apiUrl, { procedures: [this.procedureId] }).subscribe(
             features => {
                 if (features.length > 0) {
                     this.selectedFeatureId = features[0].id;
@@ -141,7 +141,7 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
         }
         this.apiV3.getDatasets(
             AppConfig.settings.apiUrl,
-            { procedure: this.procedureId, feature: featureId, expanded: true }
+            { procedures: [this.procedureId], features: [featureId], expanded: true }
         ).subscribe(
             datasets => {
                 if (datasets.length > 0) {
