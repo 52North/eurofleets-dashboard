@@ -36,6 +36,9 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private ship: L.Marker;
   private positionSubscription: Subscription;
 
+  private lastCourse: number;
+  private lastPos: L.LatLngTuple;
+
   constructor(
     private mapCache: MapCache,
     private staMqtt: StaMqttInterfaceService,
@@ -44,11 +47,12 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit(): void {
     this.map = this.mapCache.getMap('map-view');
-    this.map.setZoom(16);
+    this.map.setZoom(18);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.courseOverGround && this.courseOverGround) {
+      this.reset();
       this.sta.getDatastreamObservationsRelation(
         AppConfig.settings.sta.http,
         this.courseOverGround,
@@ -57,9 +61,16 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (res.value.length > 0) {
           res.value.reverse().forEach(e => this.setValues(e));
         }
+        this.drawMarker();
+        this.centerMap();
       });
       this.positionSubscription = this.staMqtt.subscribeDatastreamObservations(this.courseOverGround).subscribe(
-        observation => this.setValues(observation)
+        observation => {
+          console.log(`New ship position at ${observation.phenomenonTime}`);
+          this.setValues(observation);
+          this.centerMap();
+          this.drawMarker();
+        }
       );
     }
   }
@@ -68,32 +79,49 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.positionSubscription.unsubscribe();
   }
 
-  setValues(observation: Observation) {
+  private setValues(observation: Observation) {
     if (!this.polyLine) {
       this.polyLine = L.polyline([]).addTo(this.map);
     }
     try {
-      const course = Number.parseFloat(observation.result);
+      this.lastCourse = Number.parseFloat(observation.result);
       const nameValPair = observation.parameters.find(e => e.name === 'http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry');
       const geom = (nameValPair.value as any) as GeoJSON.Point;
       const lat = geom.coordinates[1];
       const lon = geom.coordinates[0];
-      const coords: L.LatLngTuple = [lat, lon];
-      this.polyLine.addLatLng(coords);
-      this.map.setView(coords, this.map.getZoom());
-      this.drawMarker(coords, course);
+      this.lastPos = [lat, lon];
+      this.polyLine.addLatLng(this.lastPos);
     } catch (error) {
       console.error(`Could not parse the geometry: ${error}`);
     }
   }
 
-  drawMarker(coords: L.LatLngTuple, course: number) {
-    const angle = course - 90;
-    if (!this.ship) {
-      this.ship = L.marker(coords, { icon: SHIP_ICON, rotationAngle: angle }).addTo(this.map);
-    } else {
-      this.ship.setLatLng(coords);
-      this.ship.setRotationAngle(angle);
+  private centerMap() {
+    if (this.lastPos) {
+      console.log(`Pos of ship: ${this.lastPos}`);
+      this.map.setView(this.lastPos, this.map.getZoom());
+    }
+  }
+
+  private drawMarker() {
+    if (this.lastPos && !isNaN(this.lastCourse)) {
+      const angle = this.lastCourse - 90;
+      if (!this.ship) {
+        this.ship = L.marker(this.lastPos, { icon: SHIP_ICON, rotationAngle: angle }).addTo(this.map);
+      } else {
+        this.ship.setLatLng(this.lastPos);
+        this.ship.setRotationAngle(angle);
+      }
+    }
+  }
+
+  private reset() {
+    if (this.positionSubscription && !this.positionSubscription.closed) {
+      this.positionSubscription.unsubscribe();
+    }
+    if (this.polyLine) {
+      this.polyLine.remove();
+      this.polyLine = null;
     }
   }
 
