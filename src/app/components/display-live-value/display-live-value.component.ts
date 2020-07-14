@@ -18,8 +18,6 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
 
   @Output() hasData: EventEmitter<boolean> = new EventEmitter();
 
-  @ViewChild('graph', { static: false }) graph: ExtendedDataD3TimeseriesGraphComponent;
-
   public observation: Observation;
   public datastream: Datastream;
 
@@ -65,7 +63,6 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
 
   private addObservationToDataArray(observation: Observation) {
     this.hasData.emit(true);
-    setTimeout(() => this.graph.redrawCompleteGraph(), 10);
     this.observation = observation;
     const timestamp = new Date(observation.phenomenonTime).getTime();
     const value = Number.parseFloat(observation.result);
@@ -91,7 +88,7 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
     }).subscribe(
       obs => {
         obs.value.reverse().forEach(e => this.addObservationToDataArray(e));
-        this.setNewTimespan();
+        setTimeout(() => this.setNewTimespan(), 100);
         this.startListeningLiveData();
       },
       error => {
@@ -109,7 +106,9 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
         diff = end - this.additionalData.data[0].timestamp;
       }
       diff = diff > MAX_TIMESPAN_IN_MS_FOR_CHART ? MAX_TIMESPAN_IN_MS_FOR_CHART : diff;
-      this.timespan = new Timespan(end - diff, end);
+      const start = end - diff;
+      this.additionalData.data = this.additionalData.data.filter(e => e.timestamp >= start - MAX_TIMESPAN_IN_MS_FOR_CHART);
+      this.timespan = new Timespan(start, end);
     }
   }
 

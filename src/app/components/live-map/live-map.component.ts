@@ -47,7 +47,7 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit(): void {
     this.map = this.mapCache.getMap('map-view');
-    this.map.setZoom(18);
+    this.map.setZoom(16);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
