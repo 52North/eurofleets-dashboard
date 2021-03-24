@@ -1,0 +1,34 @@
+:host {
+    .wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .header-wrapper {
+            text-align: center;
+            padding: 10px;
+
+            .track-selection {
+                width: 500px;
+                margin: auto;
+                display: flex;
+                flex-direction: row;
+            }
+        }
+
+        .loading-spinner {
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .flex-wrapper {
+            flex: 1;
+            position: relative;
+
+            table {
+                min-width: 100%;
+            }
+        }
+    }
+}

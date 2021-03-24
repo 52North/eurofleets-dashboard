@@ -38,8 +38,16 @@ export class ShipSelectionService {
     );
   }
 
-  public hasShip(shipId: string): Observable<boolean> {
-    return this.shipsSubsject.pipe(map(res => res.findIndex(e => e['@iot.id'] === shipId) > -1));
+  public setSelectedShip(shipId: string): Observable<boolean> {
+    return this.shipsSubsject.pipe(map(res => {
+      const ship = res.find(e => e['@iot.id'] === shipId);
+      if (ship) {
+        this.selectedShip.next(ship);
+        return true;
+      } else {
+        return false;
+      }
+    }));
   }
 
   public openSelection() {

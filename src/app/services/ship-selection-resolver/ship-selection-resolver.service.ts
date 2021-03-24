@@ -14,27 +14,33 @@ export class ShipSelectionResolverService implements Resolve<string> {
   ) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): string | Observable<string> | Promise<string> {
-    // const shipId = route.paramMap.get('id');
-    // if (shipId) {
-    //   if (this.shipSelection.hasShip(shipId)) {
-    //     return shipId;
-    //   } else {
-    //     return this.shipSelection.openSelection();
-    //   }
-    // } else {
-    //   return this.shipSelection.openSelection();
-    // }
+    const shipId = route.paramMap.get('id');
 
     return new Observable<string>((observer: Observer<string>) => {
-      this.shipSelection.selectedShip.subscribe(ship => {
-        if (ship) {
-          observer.next(ship['@iot.id']);
-          observer.complete();
-        } else {
-          this.shipSelection.openSelection();
-        }
-      });
-    });
+      if (shipId) {
+        this.shipSelection.setSelectedShip(shipId).subscribe(res => {
+          if (res) {
+            observer.next(shipId);
+            observer.complete();
+          } else {
+            this.startSelection(observer);
+          }
+        })
+      } else {
+        this.startSelection(observer);
+      }
+    })
   }
 
+
+  private startSelection(observer: Observer<string>) {
+    this.shipSelection.selectedShip.subscribe(ship => {
+      if (ship) {
+        observer.next(ship['@iot.id']);
+        observer.complete();
+      } else {
+        this.shipSelection.openSelection();
+      }
+    });
+  }
 }
