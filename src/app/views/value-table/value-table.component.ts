@@ -205,6 +205,16 @@ export class ValueTableComponent implements OnInit {
           incNewData++;
         } else if (aggregatedData[incDataSource] && aggregatedData[incDataSource].timestamp < data.values[incNewData].timestamp) {
           incDataSource++;
+        } else {
+          const curr = data.values[incNewData];
+          aggregatedData.splice(incDataSource, 0, {
+            timestamp: curr.timestamp,
+            lat: curr.geometry.coordinates[1],
+            lon: curr.geometry.coordinates[0]
+          });
+          aggregatedData[incDataSource][field] = data.values[incNewData].value;
+          incNewData++;
+          incDataSource++;
         }
       }
     }

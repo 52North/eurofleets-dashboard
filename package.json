@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "docker": "docker build -t eurofleets-dashboard . && docker run -p 80:80 --env-file=.env eurofleets-dashboard"
+    "docker": "docker build -t eurofleets-dashboard . && docker run -p 8080:80 --env-file=.env eurofleets-dashboard"
   },
   "private": true,
   "dependencies": {
