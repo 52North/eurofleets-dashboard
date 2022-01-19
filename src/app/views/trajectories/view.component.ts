@@ -117,7 +117,9 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     private findTracks() {
-        this.apiV3.getFeatures(AppConfig.settings.apiUrl, { procedures: [this.procedureId] }).subscribe(
+        this.apiV3.getFeatures(AppConfig.settings.apiUrl, { procedures: [this.procedureId] })
+        .pipe(map(features => features.sort((a, b) => a.properties.domainId > b.properties.domainId ? -1 : 1)))
+        .subscribe(
             features => {
                 if (features.length > 0) {
                     this.selectedFeatureId = features[0].id;
