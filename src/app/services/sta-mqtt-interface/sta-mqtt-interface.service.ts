@@ -26,14 +26,14 @@ export class StaMqttInterfaceService {
     params?: StaFilter<ObservationSelectParams, ObservationExpandParams>
   ): Observable<Observation> {
     // TODO: add filterung: $select=result,phenomenonTime
-    return this.mqttService.observe(`Datastreams(${datasetId})/Observations`).pipe(
+    return this.mqttService.observe(`v1.1/Datastreams(${datasetId})/Observations`).pipe(
       map(message => JSON.parse(message.payload.toString()) as Observation),
       // tap(observation => console.log(`Observation for ${datasetId} with result: ${JSON.stringify(observation, null, 2)}`))
     );
   }
 
   public subscribeObservations(): Observable<Observation> {
-    return this.mqttService.observe(`Observations`).pipe(
+    return this.mqttService.observe(`v1.1/Observations`).pipe(
       map(message => JSON.parse(message.payload.toString()) as Observation),
       tap(observation => console.log(`Observation: ${observation.result}`))
     );
