@@ -85,10 +85,14 @@ export class LiveMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     try {
       this.lastCourse = Number.parseFloat(observation.result);
-      const nameValPair = observation.parameters.find(e => e.name === 'http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry');
-      const geom = (nameValPair.value as any) as GeoJSON.Point;
-      const lat = geom.coordinates[1];
-      const lon = geom.coordinates[0];
+      let geom : GeoJSON.Point;
+      // for STA v1.1 parameters is now an object
+      if (Array.isArray(observation.parameters)) {
+        geom = (observation.parameters.find(e => e.name === "http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry").value as any)
+      } else {
+        geom = observation.parameters["http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry"];
+      }
+      const [lon, lat] = geom.coordinates;
       this.lastPos = [lat, lon];
       this.polyLine.addLatLng(this.lastPos);
     } catch (error) {
