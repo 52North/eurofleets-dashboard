@@ -24,7 +24,7 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
   public subscriptions: Subscription[] = [];
 
   public additionalData: AdditionalData;
-  public timespan: Timespan;
+  public timespan!: Timespan;
 
   public graphOptions: D3PlotOptions = {
     yaxis: true
@@ -41,7 +41,11 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
   constructor(
     private staMqtt: StaMqttInterfaceService,
     private sta: StaReadInterfaceService,
-  ) { }
+  ) {
+    const end = new Date().getTime();
+    const diff = 60000;
+    this.timespan = new Timespan(end - diff, end);
+   }
 
   ngOnInit() {
     this.subscriptions.push(this.sta.getDatastream(AppConfig.settings.sta.http, this.datastreamId).subscribe(
