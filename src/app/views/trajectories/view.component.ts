@@ -151,7 +151,10 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
                         const ds = datasets.find(e => e.parameters.phenomenon.domainId === entry.phenomenonDomainId);
                         if (ds) {
                             this.datasetIds.push(ds.internalId);
-                            this.options.set(ds.internalId, new DatasetOptions(ds.internalId, entry.color));
+                            var dsOptions = new DatasetOptions(ds.internalId, entry.color)
+                            // Invisible by default
+                            dsOptions.visible = false;
+                            this.options.set(ds.internalId, dsOptions);
                         }
                     });
                     const refDs =
