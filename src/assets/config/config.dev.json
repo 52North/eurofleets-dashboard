@@ -1,13 +1,13 @@
 {
     "sta": {
-        "http": "http://localhost/sta/",
+        "http": "http://localhost/sta/v1.1/",
         "mqtt": {
             "hostname": "localhost",
             "port": 80,
             "path": "/mqtt"
         }
     },
-    "apiUrl": "http://localhost/api/",
+    "apiUrl": "http://localhost/sos/api/",
     "courseOverGroundTrajectoryMapping": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
     "trajectoryDatasets": [
         {
@@ -43,7 +43,7 @@
         {
             "_label": "Heading",
             "phenomenonDomainId": "http://vocab.nerc.ac.uk/collection/P01/current/HDNGGP01/",
-            "color": "cf36ff"
+            "color": "green"
         },
         {
             "_label": "Salinity",
