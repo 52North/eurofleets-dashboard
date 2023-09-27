@@ -1,13 +1,13 @@
 {
     "sta": {
-        "http": "http://localhost/sta/v1.1/",
+        "http": "http://docker.srv.int.52north.org:8090/sta/v1.1/",
         "mqtt": {
-            "hostname": "localhost",
-            "port": 80,
+            "hostname": "docker.srv.int.52north.org",
+            "port": 8090,
             "path": "/mqtt"
         }
     },
-    "apiUrl": "http://localhost/sos/api/",
+    "apiUrl": "http://docker.srv.int.52north.org:8090/sos/api/",
     "courseOverGroundTrajectoryMapping": "http://vocab.nerc.ac.uk/collection/P01/current/APDAZZ01/",
     "trajectoryDatasets": [
         {
