@@ -111,7 +111,14 @@ export class DisplayLiveValueComponent implements OnInit, OnDestroy {
       }
       diff = diff > MAX_TIMESPAN_IN_MS_FOR_CHART ? MAX_TIMESPAN_IN_MS_FOR_CHART : diff;
       const start = end - diff;
+      let second = this.additionalData.data[1]
       this.additionalData.data = this.additionalData.data.filter(e => e.timestamp >= start - MAX_TIMESPAN_IN_MS_FOR_CHART);
+
+      // we need at least 2 points for graph y axis to scale properly. 
+      // We use second last value despite it technically being outside of max_timespan 
+      if (this.additionalData.data.length == 1) {
+        this.additionalData.data.push(second)
+      } 
       this.timespan = new Timespan(start, end);
     }
   }
