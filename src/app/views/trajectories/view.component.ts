@@ -152,8 +152,12 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
                         if (ds) {
                             this.datasetIds.push(ds.internalId);
                             var dsOptions = new DatasetOptions(ds.internalId, entry.color)
-                            // Invisible by default
-                            dsOptions.visible = false;
+                            // Make only CoG visible by default
+                            if (entry.phenomenonDomainId == AppConfig.settings.courseOverGroundTrajectoryMapping) {
+                                dsOptions.visible = true;
+                            } else {
+                                dsOptions.visible = false;
+                            }
                             this.options.set(ds.internalId, dsOptions);
                         }
                     });
