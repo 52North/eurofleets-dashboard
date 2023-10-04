@@ -83,13 +83,17 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
 
     public readonly mapId = 'trajectory';
 
+    private apiV3Untyped: any;
+
     constructor(
         private servicesConnector: HelgolandServicesConnector,
         private shipSelection: ShipSelectionService,
         private apiV3: ApiV3InterfaceService,
         private mapCache: MapCache,
         private snackBar: MatSnackBar,
-    ) { }
+    ) { 
+        this.apiV3Untyped = apiV3;
+    }
 
     public ngOnInit() {
         this.shipSelection.selectedShip.subscribe(ship => this.fetchProcedures(ship['@iot.id']));
@@ -117,8 +121,20 @@ export class TrajectoriesViewComponent implements OnInit, OnDestroy {
     }
 
     private findTracks() {
-        this.apiV3.getFeatures(AppConfig.settings.apiUrl, { procedures: [this.procedureId] })
-        .pipe(map(features => features.sort((a, b) => a.properties.domainId > b.properties.domainId ? -1 : 1)))
+        this.apiV3Untyped.requestApi(AppConfig.settings.apiUrl + "features?procedures=" + this.procedureId + "&select=id,domainId,label")
+        .pipe(map(features => 
+            (features as Array<any>).sort((a, b) => {
+                let ayear = a.properties.domainId.substr(-7, 4)
+                let amonth = a.properties.domainId.substr(-2)
+                let byear = b.properties.domainId.substr(-7, 4)
+                let bmonth = b.properties.domainId.substr(-2)
+                if (ayear !== byear) {
+                    return byear - ayear;
+                } else {
+                    return bmonth - amonth; 
+                }
+            }))
+        )
         .subscribe(
             features => {
                 if (features.length > 0) {
